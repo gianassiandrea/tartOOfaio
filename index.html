@@ -32,7 +32,6 @@
             padding-bottom: 80px;
         }
 
-        /* HEADER & TOP BAR */
         header {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
@@ -41,17 +40,16 @@
             border-bottom: 5px solid var(--accent);
         }
 
-        header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-        }
+        header h1 { font-size: 2.2rem; margin-bottom: 5px; }
 
-        /* NAV MENU */
         nav {
             background-color: #efeae2;
             padding: 10px;
             text-align: center;
             border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
 
         nav a {
@@ -59,7 +57,6 @@
             text-decoration: none;
             font-weight: bold;
             padding: 8px 16px;
-            margin: 0 5px;
             border-radius: 4px;
             transition: background 0.2s;
         }
@@ -72,10 +69,9 @@
         .container {
             max-width: 900px;
             margin: 20px auto;
-            padding: 0 20px;
+            padding: 0 15px;
         }
 
-        /* INFOBAR STRUTTURATA (Luna + Regola d'oro) */
         .top-info-bar {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -96,6 +92,8 @@
             position: relative;
             font-weight: 600;
             margin-bottom: 15px;
+            width: 100%;
+            max-width: max-content;
         }
 
         .lunar-widget .moon-icon {
@@ -103,13 +101,11 @@
             margin-right: 10px;
         }
 
-        /* POPUP AL PASSAGGIO DEL MOUSE (Hover Tooltip) */
         .lunar-widget .tooltip-text {
             visibility: hidden;
             width: 280px;
             background-color: #40322a;
             color: #fff;
-            text-align: left;
             border: 1px solid var(--accent);
             border-radius: 8px;
             padding: 12px;
@@ -118,7 +114,7 @@
             top: 125%;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 166px rgba(0,0,0,0.2);
             font-weight: normal;
             font-size: 0.9rem;
             opacity: 0;
@@ -126,6 +122,12 @@
         }
 
         .lunar-widget:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Tocco reattivo per dispositivi touch senza mouse: un tap mostra il fumetto */
+        .lunar-widget:active .tooltip-text {
             visibility: visible;
             opacity: 1;
         }
@@ -138,16 +140,13 @@
             font-size: 0.95rem;
         }
 
-        .rule-box strong {
-            color: var(--success);
-        }
+        .rule-box strong { color: var(--success); }
 
-        /* TABELLA CALENDARIO CLICCABILE */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 4px 12px rgba(92, 64, 51, 0.03);
         }
 
@@ -190,16 +189,13 @@
             display: block;
         }
 
-        .clickable-table tr.row-link td a:hover {
-            text-decoration: underline;
-        }
-
         .badge {
             display: inline-block;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
+            text-align: center;
         }
         .badge-allowed { background-color: #d4edda; color: #155724; }
         .badge-forbidden { background-color: #f8d7da; color: #721c24; }
@@ -214,6 +210,60 @@
             bottom: 0;
             width: 100%;
             border-top: 1px solid var(--border);
+            z-index: 10;
+        }
+
+        /* 📱 MEDIA QUERY: REGOLE PER GLI SCHERMI DEI CELLULARI (< 600px) */
+        @media screen and (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            nav { font-size: 0.9rem; padding: 5px; }
+            nav a { padding: 6px 10px; }
+            
+            /* Trasformiamo la tabella in blocchi di schede */
+            .clickable-table, .clickable-table thead, .clickable-table tbody, .clickable-table th, .clickable-table td, .clickable-table tr {
+                display: block;
+                width: 100%;
+            }
+
+            /* Nascondiamo l'intestazione della tabella classica */
+            .clickable-table thead {
+                display: none;
+            }
+
+            .clickable-table tr.row-link {
+                margin-bottom: 15px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                background-color: #faf8f5;
+                padding: 10px;
+            }
+
+            .clickable-table td {
+                text-align: right;
+                padding: 8px 10px;
+                border-bottom: 1px dashed var(--border);
+                position: relative;
+                font-size: 0.95rem;
+            }
+
+            .clickable-table td:last-child {
+                border-bottom: none;
+            }
+
+            /* Inseriamo etichette a sinistra per ogni dato */
+            .clickable-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: 50%;
+                text-align: left;
+                font-weight: 600;
+                color: var(--text-light);
+            }
+            
+            .clickable-table tr.row-link td a {
+                display: inline;
+            }
         }
     </style>
 </head>
@@ -239,14 +289,14 @@
             </div>
 
             <div class="rule-box">
-                💡 <strong>La Regola della Buttata:</strong> L'umidità ottimale del terreno unita a una temperatura stabile nei <strong>10 giorni successivi a una pioggia in luna crescente</strong> crea le condizioni biologiche perfette per la nascita e lo sviluppo del tartufo.
+                💡 <strong>La Regola della Buttata:</strong> L'umidità ottimale del terreno unita a una temperatura stabile nei <strong>10 giorni successivi a una pioggia in luna crescente</strong> crea le condizioni perfette.
             </div>
         </div>
 
         <div class="card">
             <h2>Calendario di Raccolta Nazionale</h2>
             <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">
-                👉 <i>Clicca su una varietà di tartufo per aprire la sua scheda tecnica dettagliata con terreni, piante simbionti e immagini.</i>
+                👉 <i>Clicca su una varietà di tartufo per aprire la sua scheda tecnica.</i>
             </p>
             
             <table class="clickable-table">
@@ -260,28 +310,28 @@
                 </thead>
                 <tbody>
                     <tr class="row-link" onclick="window.location.href='bianco_pregiato.html'">
-                        <td><a href="bianco_pregiato.html">Tartufo Bianco Pregiato</a></td>
-                        <td><i>Tuber magnatum Pico</i></td>
-                        <td>10 Set - 31 Gen</td>
-                        <td><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Specie:"><a href="bianco_pregiato.html">Tartufo Bianco Pregiato</a></td>
+                        <td data-label="Scientifico:"><i>Tuber magnatum Pico</i></td>
+                        <td data-label="Periodo:">10 Set - 31 Gen</td>
+                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
                     </tr>
                     <tr class="row-link" onclick="window.location.href='nero_pregiato.html'">
-                        <td><a href="nero_pregiato.html">Tartufo Nero Pregiato</a></td>
-                        <td><i>Tuber melanosporum Vittad.</i></td>
-                        <td>15 Nov - 15 Mar</td>
-                        <td><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Specie:"><a href="nero_pregiato.html">Tartufo Nero Pregiato</a></td>
+                        <td data-label="Scientifico:"><i>Tuber melanosporum Vittad.</i></td>
+                        <td data-label="Periodo:">15 Nov - 15 Mar</td>
+                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
                     </tr>
                     <tr class="row-link" onclick="window.location.href='scorzone_estivo.html'">
-                        <td><a href="scorzone_estivo.html">Scorzone (Estivo)</a></td>
-                        <td><i>Tuber aestivum Vittad.</i></td>
-                        <td>01 Mag - 31 Ago</td>
-                        <td><span class="badge badge-allowed">Aperto</span></td>
+                        <td data-label="Specie:"><a href="scorzone_estivo.html">Scorzone (Estivo)</a></td>
+                        <td data-label="Scientifico:"><i>Tuber aestivum Vittad.</i></td>
+                        <td data-label="Periodo:">01 Mag - 31 Ago</td>
+                        <td data-label="Stato:"><span class="badge badge-allowed">Aperto</span></td>
                     </tr>
                     <tr class="row-link" onclick="window.location.href='bianchetto_marzuolo.html'">
-                        <td><a href="bianchetto_marzuolo.html">Bianchetto o Marzuolo</a></td>
-                        <td><i>Tuber borchii Vittad.</i></td>
-                        <td>15 Gen - 30 Apr</td>
-                        <td><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Specie:"><a href="bianchetto_marzuolo.html">Bianchetto / Marzuolo</a></td>
+                        <td data-label="Scientifico:"><i>Tuber borchii Vittad.</i></td>
+                        <td data-label="Periodo:">15 Gen - 30 Apr</td>
+                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -296,50 +346,25 @@
     <script>
         function getLunarPhase() {
             const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth() + 1;
-            const day = now.getDate();
-
-            // Algoritmo di base per il ciclo sinodico (Rif: Luna Nuova del 6 Gennaio 2000)
             const refDate = new Date(2000, 0, 6);
-            const diffTime = now - refDate;
-            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-            const cycle = 29.530588853;
-            const phasePct = (diffDays / cycle) % 1;
+            const diffDays = (now - refDate) / (1000 * 60 * 60 * 24);
+            const phasePct = (diffDays / 29.530588853) % 1;
 
-            let icon = "🌑";
-            let name = "Luna Nuova";
-            let advice = "Fase di riposo miceliare. Il micelio si sviluppa in profondità nel terreno selvatico. La raccolta è ridotta, ottima fase per lo studio dei boschi.";
+            let icon = "🌑"; let name = "Luna Nuova";
+            let advice = "Fase di riposo miceliare. Il micelio si sviluppa in profondità.";
 
-            if (phasePct >= 0.03 && phasePct < 0.22) {
-                icon = "🌓"; name = "Luna Crescente";
-                advice = "La linfa risale e stimola la formazione dei primordi. Tieni d'occhio il meteo: se piove in questa fase, la buttata è vicina!";
-            } else if (phasePct >= 0.22 && phasePct < 0.28) {
-                icon = "🌓"; name = "Primo Quarto";
-                advice = "Fase di spinta energetica attiva. Accompagna la prima crescita dei corpi fruttiferi se il suolo mantiene l'umidità.";
-            } else if (phasePct >= 0.28 && phasePct < 0.47) {
-                icon = "🌔"; name = "Gibbosa Crescente";
-                advice = "I tartufi sotterranei iniziano a sviluppare l'aroma caratteristico. Ottima reattività dei cani durante l'addestramento.";
-            } else if (phasePct >= 0.47 && phasePct < 0.53) {
-                icon = "🌕"; name = "Luna Piena";
-                advice = "Massimo sviluppo aromatico e picco di rilascio delle spore! La tradizione insegna che il cane percepisce la scia odorosa con molta più facilità.";
-            } else if (phasePct >= 0.53 && phasePct < 0.72) {
-                icon = "◗"; name = "Gibbosa Calante";
-                advice = "Fase di consolidamento. Gli esemplari nati nel ciclo precedente completano la maturazione diventando più compatti e resistenti.";
-            } else if (phasePct >= 0.72 && phasePct < 0.78) {
-                icon = "🌗"; name = "Ultimo Quarto";
-                advice = "I tessuti del tartufo si stabilizzano. Gli esemplari raccolti adesso godono solitamente di una migliore conservabilità nel tempo.";
-            } else if (phasePct >= 0.78 || phasePct < 0.03) {
-                icon = "🌘"; name = "Luna Calante";
-                advice = "Maturazione completata per il ciclo attuale. Ottimo momento per raccogliere esemplari ben maturi, sodi e profumati prima della nuova luna.";
-            }
+            if (phasePct >= 0.03 && phasePct < 0.22) { icon = "🌓"; name = "Luna Crescente"; advice = "La linfa risale e stimola i primordi. Se piove ora, la buttata è vicina!"; }
+            else if (phasePct >= 0.22 && phasePct < 0.28) { icon = "🌓"; name = "Primo Quarto"; advice = "Spinta energetica attiva per lo sviluppo iniziale dei corpi fruttiferi."; }
+            else if (phasePct >= 0.28 && phasePct < 0.47) { icon = "🌔"; name = "Gibbosa Crescente"; advice = "I profumi iniziano a formarsi. Ottima reattività dei cani."; }
+            else if (phasePct >= 0.47 && phasePct < 0.53) { icon = "🌕"; name = "Luna Piena"; advice = "Massimo sviluppo aromatico! Il cane percepisce l'usta con molta facilità."; }
+            else if (phasePct >= 0.53 && phasePct < 0.72) { icon = "◗"; name = "Gibbosa Calante"; advice = "I tartufi completano la maturazione diventando compatti."; }
+            else if (phasePct >= 0.72 && phasePct < 0.78) { icon = "🌗"; name = "Ultimo Quarto"; advice = "I tessuti si stabilizzano. Ottima conservabilità dei pezzi raccolti."; }
+            else if (phasePct >= 0.78 || phasePct < 0.03) { icon = "🌘"; name = "Luna Calante"; advice = "Maturazione al termine. Esemplari sodi e profumati prima del nuovo ciclo."; }
 
             document.getElementById('moonIcon').innerText = icon;
             document.getElementById('moonPhaseName').innerText = "Luna Oggi: " + name;
             document.getElementById('moonTooltip').innerHTML = "<strong>Consiglio:</strong> " + advice;
         }
-
-        // Esegui il calcolo all'avvio
         window.onload = getLunarPhase;
     </script>
 </body>
