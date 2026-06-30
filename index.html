@@ -15,7 +15,7 @@
             --text-light: #6e6259;
             --border: #e8e2da;
             --success: #4a7c59;
-            --danger: #b84a39;
+            --info-bg: #eef5f0;
         }
 
         * {
@@ -29,127 +29,171 @@
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
-            padding-bottom: 60px;
+            padding-bottom: 80px;
         }
 
+        /* HEADER & TOP BAR */
         header {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
-            padding: 40px 20px;
+            padding: 25px 20px;
             text-align: center;
             border-bottom: 5px solid var(--accent);
         }
 
         header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
         }
 
-        header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto;
+        /* NAV MENU */
+        nav {
+            background-color: #efeae2;
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            background-color: var(--card-bg);
+            color: var(--primary-light);
         }
 
         .container {
-            max-width: 1000px;
-            margin: 30px auto;
+            max-width: 900px;
+            margin: 20px auto;
             padding: 0 20px;
         }
 
-        /* Tabs Navigation */
-        .tabs {
-            display: flex;
-            background-color: #efeae2;
-            border-radius: 8px;
-            padding: 5px;
-            margin-bottom: 30px;
-            overflow-x: auto;
+        /* INFOBAR STRUTTURATA (Luna + Regola d'oro) */
+        .top-info-bar {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
 
-        .tab-btn {
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            background: none;
-            font-size: 1rem;
+        .lunar-widget {
+            display: inline-flex;
+            align-items: center;
+            background: #2e2520;
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 30px;
+            cursor: help;
+            position: relative;
             font-weight: 600;
-            color: var(--text-light);
-            cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s;
-            white-space: nowrap;
-            text-align: center;
+            margin-bottom: 15px;
         }
 
-        .tab-btn.active {
-            background-color: var(--card-bg);
-            color: var(--primary);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        .lunar-widget .moon-icon {
+            font-size: 1.6rem;
+            margin-right: 10px;
         }
 
-        /* Tab Content */
-        .tab-content {
-            display: none;
+        /* POPUP AL PASSAGGIO DEL MOUSE (Hover Tooltip) */
+        .lunar-widget .tooltip-text {
+            visibility: hidden;
+            width: 280px;
+            background-color: #40322a;
+            color: #fff;
+            text-align: left;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 100;
+            top: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            font-weight: normal;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .tab-content.active {
-            display: block;
+        .lunar-widget:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
         }
 
-        /* Cards and Sections */
+        .rule-box {
+            background-color: var(--info-bg);
+            border-left: 4px solid var(--success);
+            padding: 12px 15px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .rule-box strong {
+            color: var(--success);
+        }
+
+        /* TABELLA CALENDARIO CLICCABILE */
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 25px;
-            margin-bottom: 25px;
             box-shadow: 0 4px 12px rgba(92, 64, 51, 0.03);
         }
 
         h2 {
             color: var(--primary);
-            margin-bottom: 20px;
-            border-left: 4px solid var(--accent);
-            padding-left: 12px;
-            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
         }
 
-        h3 {
-            color: var(--primary-light);
-            margin: 15px 0 10px 0;
-        }
-
-        /* Table Styling */
-        table {
+        .clickable-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
+            margin-top: 15px;
         }
 
-        th, td {
-            padding: 12px 15px;
+        .clickable-table th, .clickable-table td {
+            padding: 14px 15px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
 
-        th {
+        .clickable-table th {
             background-color: var(--primary);
             color: white;
-            font-weight: 600;
         }
 
-        tr:nth-child(even) {
-            background-color: #faf8f5;
+        .clickable-table tr.row-link {
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        /* Badge/Status styling */
+        .clickable-table tr.row-link:hover {
+            background-color: #f7f3ed;
+        }
+
+        .clickable-table tr.row-link td a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+        }
+
+        .clickable-table tr.row-link td a:hover {
+            text-decoration: underline;
+        }
+
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -157,105 +201,14 @@
             font-size: 0.85rem;
             font-weight: 600;
         }
-
         .badge-allowed { background-color: #d4edda; color: #155724; }
         .badge-forbidden { background-color: #f8d7da; color: #721c24; }
 
-        /* Grid Layouts */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        /* Quiz Simulator */
-        .quiz-box {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .option-btn {
-            display: block;
-            width: 100%;
-            padding: 12px 15px;
-            margin: 10px 0;
-            background-color: #faf8f5;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .option-btn:hover {
-            background-color: #f0eae1;
-            border-color: var(--accent);
-        }
-
-        .option-btn.correct {
-            background-color: #d4edda !important;
-            border-color: var(--success) !important;
-            color: #155724;
-            font-weight: 600;
-        }
-
-        .option-btn.wrong {
-            background-color: #f8d7da !important;
-            border-color: var(--danger) !important;
-            color: #721c24;
-        }
-
-        .btn-next {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 15px;
-            float: right;
-        }
-
-        .btn-next:hover {
-            background-color: var(--primary-light);
-        }
-
-        .clearfix::after {
-            content: "";
-            clear: both;
-            display: table;
-        }
-
-        /* Lunar Phase Widget Visual */
-        .lunar-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .lunar-card {
-            background: #faf8f5;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .lunar-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             color: var(--text-light);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             background-color: #efeae2;
             position: fixed;
             bottom: 0;
@@ -268,260 +221,126 @@
 
     <header>
         <h1>Il Tartufaio</h1>
-        <p>Il tuo Vademecum Digitale interattivo per la ricerca e lo studio del tartufo</p>
+        <p>Vademecum Digitale per la Cerca</p>
     </header>
 
+    <nav>
+        <a href="index.html" class="active">📅 Home / Calendario</a>
+        <a href="quiz.html">🎓 Simulatore Esame</a>
+    </nav>
+
     <div class="container">
-        <!-- Tabs Nav -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="openTab('calendario')">📅 Calendario & Norme</button>
-            <button class="tab-btn" onclick="openTab('terreni')">🌱 Specie & Terreni</button>
-            <button class="tab-btn" onclick="openTab('luna')">🌙 Fasi Lunari</button>
-            <button class="tab-btn" onclick="openTab('quiz')">🎓 Simulatore Esame</button>
-        </div>
-
-        <!-- TAB: CALENDARIO -->
-        <div id="calendario" class="tab-content active">
-            <div class="card">
-                <h2>Calendario Nazionale e Regionale di Raccolta</h2>
-                <p>La raccolta dei tartufi è disciplinata da precise normative per garantire la tutela ambientale e la riproduzione delle specie. Di seguito le finestre generali di raccolta:</p>
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tartufo</th>
-                            <th>Nome Scientifico</th>
-                            <th>Periodo di Raccolta</th>
-                            <th>Stato Attuale</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Bianco Pregiato</strong></td>
-                            <td><i>Tuber magnatum Pico</i></td>
-                            <td>Dal 10 Settembre al 31 Gennaio</td>
-                            <td><span class="badge badge-forbidden">Chiuso</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Nero Pregiato</strong></td>
-                            <td><i>Tuber melanosporum Vittad.</i></td>
-                            <td>Dal 15 Novembre al 15 Marzo</td>
-                            <td><span class="badge badge-forbidden">Chiuso</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Scorzone (Estivo)</strong></td>
-                            <td><i>Tuber aestivum Vittad.</i></td>
-                            <td>Dal 1 Maggio al 31 Agosto</td>
-                            <td><span class="badge badge-allowed">Aperto</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Bianchetto o Marzuolo</strong></td>
-                            <td><i>Tuber borchii Vittad.</i></td>
-                            <td>Dal 15 Gennaio al 30 Aprile</td>
-                            <td><span class="badge badge-forbidden">Chiuso</span></td>
-                        </tr>
-                        <tr>
-                            <td><strong>Uncinato</strong></td>
-                            <td><i>Tuber uncinatum Chatin</i></td>
-                            <td>Dal 1 Ottobre al 31 Dicembre</td>
-                            <td><span class="badge badge-forbidden">Chiuso</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+        
+        <div class="top-info-bar">
+            <div class="lunar-widget" id="lunarWidget">
+                <span class="moon-icon" id="moonIcon">🌑</span>
+                <span id="moonPhaseName">Calcolo Fase...</span>
+                <div class="tooltip-text" id="moonTooltip">Caricamento consiglio della tradizione...</div>
             </div>
 
-            <div class="card">
-                <h2>Regole Fondamentali della Normativa</h2>
-                <ul>
-                    <li><strong>Strumenti:</strong> È obbligatorio l'uso dell'apposito vanghetto o zappetto con limitazioni sulle dimensioni della lama secondo le leggi regionali.</li>
-                    <li><strong>Cani:</strong> La ricerca deve essere effettuata tassativamente con l'ausilio di cani addestrati a tale scopo.</li>
-                    <li><strong>Ripristino delle buche:</strong> È obbligatorio ricolmare immediatamente le buche aperte per la ricerca, restituendo il terreno allo stato originario per proteggere il micelio.</li>
-                    <li><strong>Tesserino:</strong> La raccolta è consentita solo a chi è in possesso del tesserino di idoneità in corso di validità.</li>
-                </ul>
+            <div class="rule-box">
+                💡 <strong>La Regola della Buttata:</strong> L'umidità ottimale del terreno unita a una temperatura stabile nei <strong>10 giorni successivi a una pioggia in luna crescente</strong> crea le condizioni biologiche perfette per la nascita e lo sviluppo del tartufo.
             </div>
         </div>
 
-        <!-- TAB: TERRENI -->
-        <div id="terreni" class="tab-content">
-            <div class="card">
-                <h2>I Terreni Ideali e le Piante Simbionti</h2>
-                <p>Ogni varietà di tartufo predilige una specifica tipologia di suolo e una precisa associazione con piante boschive.</p>
-                
-                <div class="grid-2" style="margin-top: 20px;">
-                    <div class="card" style="margin-bottom:0; background: #faf8f5;">
-                        <h3>Tartufo Bianco Pregiato</h3>
-                        <p><strong>Terreno:</strong> Alluvionale, marnoso-calcareo, soffice, umido ma ben drenato, ricco di calcio.</p>
-                        <p><strong>Simbionti:</strong> Quercia (Farnia, Rovere), Pioppo, Salice, Tiglio, Nocciolo.</p>
-                    </div>
-                    
-                    <div class="card" style="margin-bottom:0; background: #faf8f5;">
-                        <h3>Tartufo Nero Pregiato</h3>
-                        <p><strong>Terreno:</strong> Calcareo puro, breccioso, ben esposto al sole, povero di sostanza organica superficiale.</p>
-                        <p><strong>Simbionti:</strong> Roverella, Leccio, Cerro, Nocciolo.</p>
-                    </div>
-
-                    <div class="card" style="margin-bottom:0; background: #faf8f5;">
-                        <h3>Scorzone Estivo</h3>
-                        <p><strong>Terreno:</strong> Tipicamente calcareo, anche molto sassoso e superficiale. Tollera la siccità estiva.</p>
-                        <p><strong>Simbionti:</strong> Roverella, Cerro, Faggio, Pino nero, Nocciolo.</p>
-                    </div>
-
-                    <div class="card" style="margin-bottom:0; background: #faf8f5;">
-                        <h3>Bianchetto / Marzuolo</h3>
-                        <p><strong>Terreno:</strong> Molto versatile; si adatta sia a suoli sabbiosi litoranei sia a suoli marnosi argillosi dell'interno.</p>
-                        <p><strong>Simbionti:</strong> Pini (Pino marittimo, d'Aleppo), Querce, Pioppi.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: LUNA -->
-        <div id="luna" class="tab-content">
-            <div class="card">
-                <h2>L'Influenza delle Fasi Lunari nella Tradizione</h2>
-                <p>Secondo l'esperienza e la tradizione dei maestri tartufai, la luna gioca un ruolo indiretto ma avvertibile nello sviluppo e nella maturazione dei corpi fruttiferi.</p>
-                
-                <div class="lunar-grid">
-                    <div class="lunar-card">
-                        <div class="lunar-icon">🌑</div>
-                        <h4>Luna Nuova</h4>
-                        <p style="font-size: 0.9rem; margin-top: 5px; color: var(--text-light);">Fase di riposo. Ideale per la crescita sotterranea del micelio profondo.</p>
-                    </div>
-                    <div class="lunar-card">
-                        <div class="lunar-icon">🌓</div>
-                        <h4>Luna Crescente</h4>
-                        <p style="font-size: 0.9rem; margin-top: 5px; color: var(--text-light);">Aumento della linfa e stimolazione della nascita dei nuovi primordi.</p>
-                    </div>
-                    <div class="lunar-card">
-                        <div class="lunar-icon">🌕</div>
-                        <h4>Luna Piena</h4>
-                        <p style="font-size: 0.9rem; margin-top: 5px; color: var(--text-light);">Massimo sviluppo aromatico. Molti tartufai segnalano una maggiore ricezione da parte del cane.</p>
-                    </div>
-                    <div class="lunar-card">
-                        <div class="lunar-icon">🌗</div>
-                        <h4>Luna Calante</h4>
-                        <p style="font-size: 0.9rem; margin-top: 5px; color: var(--text-light);">Periodo di stabilizzazione. Ottimo per la raccolta di esemplari maturi e compatti.</p>
-                    </div>
-                </div>
-
-                <div style="margin-top: 25px; background: #eef5f0; padding: 15px; border-radius: 8px; border-left: 4px solid var(--success);">
-                    <p>💡 <strong>Consiglio del Maestro:</strong> Più che la luna in sé, l'umidità del terreno combinata alla temperatura nei 10 giorni successivi alla pioggia in luna crescente crea la perfetta "buttata".</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB: QUIZ -->
-        <div id="quiz" class="tab-content">
-            <div class="card">
-                <h2>Simulatore d'Esame Tartufaio</h2>
-                <p>Metti alla prova le tue conoscenze con le domande estratte dal materiale ufficiale d'esame.</p>
-                
-                <div class="quiz-box style="margin-top: 20px;">
-                    <div id="quiz-container">
-                        <h3 id="question-text">Caricamento domanda...</h3>
-                        <div id="options-container"></div>
-                        <div class="clearfix">
-                            <button id="next-btn" class="btn-next" style="display:none;" onclick="loadNextQuestion()">Prossima Domanda</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="card">
+            <h2>Calendario di Raccolta Nazionale</h2>
+            <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">
+                👉 <i>Clicca su una varietà di tartufo per aprire la sua scheda tecnica dettagliata con terreni, piante simbionti e immagini.</i>
+            </p>
+            
+            <table class="clickable-table">
+                <thead>
+                    <tr>
+                        <th>Specie / Varietà</th>
+                        <th>Nome Scientifico</th>
+                        <th>Periodo Legale</th>
+                        <th>Stato</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row-link" onclick="window.location.href='bianco_pregiato.html'">
+                        <td><a href="bianco_pregiato.html">Tartufo Bianco Pregiato</a></td>
+                        <td><i>Tuber magnatum Pico</i></td>
+                        <td>10 Set - 31 Gen</td>
+                        <td><span class="badge badge-forbidden">Chiuso</span></td>
+                    </tr>
+                    <tr class="row-link" onclick="window.location.href='nero_pregiato.html'">
+                        <td><a href="nero_pregiato.html">Tartufo Nero Pregiato</a></td>
+                        <td><i>Tuber melanosporum Vittad.</i></td>
+                        <td>15 Nov - 15 Mar</td>
+                        <td><span class="badge badge-forbidden">Chiuso</span></td>
+                    </tr>
+                    <tr class="row-link" onclick="window.location.href='scorzone_estivo.html'">
+                        <td><a href="scorzone_estivo.html">Scorzone (Estivo)</a></td>
+                        <td><i>Tuber aestivum Vittad.</i></td>
+                        <td>01 Mag - 31 Ago</td>
+                        <td><span class="badge badge-allowed">Aperto</span></td>
+                    </tr>
+                    <tr class="row-link" onclick="window.location.href='bianchetto_marzuolo.html'">
+                        <td><a href="bianchetto_marzuolo.html">Bianchetto o Marzuolo</a></td>
+                        <td><i>Tuber borchii Vittad.</i></td>
+                        <td>15 Gen - 30 Apr</td>
+                        <td><span class="badge badge-forbidden">Chiuso</span></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
     </div>
 
     <footer>
-        Applicazione Vademecum Tartufaio &copy; 2026 - Gianassi Andrea
+        Vademecum Tartufaio Digitale &copy; 2026
     </footer>
 
     <script>
-        // Tab system
-        function openTab(tabId) {
-            const contents = document.querySelectorAll('.tab-content');
-            const buttons = document.querySelectorAll('.tab-btn');
-            
-            contents.forEach(content => content.classList.remove('active'));
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-        }
+        function getLunarPhase() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const day = now.getDate();
 
-        // Quiz Questions Data from user's file structure
-        const quizData = [
-            {
-                q: "Qual è il nome latino corretto del Tartufo Bianco Pregiato?",
-                options: ["Tuber magnatum Pico", "Tuber albidum Pico", "Tuber borchii Vitt."],
-                correct: 0
-            },
-            {
-                q: "Come si presenta il peridio del Tuber magnatum Pico?",
-                options: ["Liscio e di colore da giallo ocra a verdastro", "Verrucoso, formato da grosse verruche nere", "Rugoso di colore nerastro"],
-                correct: 0
-            },
-            {
-                q: "Quale tipo di terreno predilige principalmente il Tartufo Bianco Pregiato?",
-                options: ["Terreno calcareo puro e molto breccioso", "Terreno alluvionale, marnoso-calcareo, soffice e umido", "Terreno acido e sabbioso"],
-                correct: 1
-            },
-            {
-                q: "Cosa è obbligatorio fare dopo aver estratto un tartufo?",
-                options: ["Lasciare la buca aperta per far respirare il micelio", "Coprire la buca con foglie secche senza rimettere la terra", "Ricolmare immediatamente la buca con la terra estratta e ripianarla"],
-                correct: 2
-            },
-            {
-                q: "È consentito l'uso di attrezzi da scavo diversi da quelli autorizzati (es. zappe grandi o vanghe)?",
-                options: ["Sì, se il terreno è molto duro", "No, è vietato e danneggia gravemente il sistema radicale e il micelio", "Solo se si è da soli nel bosco"],
-                correct: 1
+            // Algoritmo di base per il ciclo sinodico (Rif: Luna Nuova del 6 Gennaio 2000)
+            const refDate = new Date(2000, 0, 6);
+            const diffTime = now - refDate;
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            const cycle = 29.530588853;
+            const phasePct = (diffDays / cycle) % 1;
+
+            let icon = "🌑";
+            let name = "Luna Nuova";
+            let advice = "Fase di riposo miceliare. Il micelio si sviluppa in profondità nel terreno selvatico. La raccolta è ridotta, ottima fase per lo studio dei boschi.";
+
+            if (phasePct >= 0.03 && phasePct < 0.22) {
+                icon = "🌓"; name = "Luna Crescente";
+                advice = "La linfa risale e stimola la formazione dei primordi. Tieni d'occhio il meteo: se piove in questa fase, la buttata è vicina!";
+            } else if (phasePct >= 0.22 && phasePct < 0.28) {
+                icon = "🌓"; name = "Primo Quarto";
+                advice = "Fase di spinta energetica attiva. Accompagna la prima crescita dei corpi fruttiferi se il suolo mantiene l'umidità.";
+            } else if (phasePct >= 0.28 && phasePct < 0.47) {
+                icon = "🌔"; name = "Gibbosa Crescente";
+                advice = "I tartufi sotterranei iniziano a sviluppare l'aroma caratteristico. Ottima reattività dei cani durante l'addestramento.";
+            } else if (phasePct >= 0.47 && phasePct < 0.53) {
+                icon = "🌕"; name = "Luna Piena";
+                advice = "Massimo sviluppo aromatico e picco di rilascio delle spore! La tradizione insegna che il cane percepisce la scia odorosa con molta più facilità.";
+            } else if (phasePct >= 0.53 && phasePct < 0.72) {
+                icon = "◗"; name = "Gibbosa Calante";
+                advice = "Fase di consolidamento. Gli esemplari nati nel ciclo precedente completano la maturazione diventando più compatti e resistenti.";
+            } else if (phasePct >= 0.72 && phasePct < 0.78) {
+                icon = "🌗"; name = "Ultimo Quarto";
+                advice = "I tessuti del tartufo si stabilizzano. Gli esemplari raccolti adesso godono solitamente di una migliore conservabilità nel tempo.";
+            } else if (phasePct >= 0.78 || phasePct < 0.03) {
+                icon = "🌘"; name = "Luna Calante";
+                advice = "Maturazione completata per il ciclo attuale. Ottimo momento per raccogliere esemplari ben maturi, sodi e profumati prima della nuova luna.";
             }
-        ];
 
-        let currentQuestionIndex = 0;
-
-        function displayQuestion() {
-            const currentQuestion = quizData[currentQuestionIndex];
-            document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${currentQuestion.q}`;
-            
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-            
-            currentQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.innerText = option;
-                button.classList.add('option-btn');
-                button.onclick = () => checkAnswer(index, button);
-                optionsContainer.appendChild(button);
-            });
-            
-            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('moonIcon').innerText = icon;
+            document.getElementById('moonPhaseName').innerText = "Luna Oggi: " + name;
+            document.getElementById('moonTooltip').innerHTML = "<strong>Consiglio:</strong> " + advice;
         }
 
-        function checkAnswer(selectedIndex, clickedButton) {
-            const currentQuestion = quizData[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.option-btn');
-            
-            // Disable all buttons after choice
-            buttons.forEach(btn => btn.disabled = true);
-            
-            if (selectedIndex === currentQuestion.correct) {
-                clickedButton.classList.add('correct');
-            } else {
-                clickedButton.classList.add('wrong');
-                buttons[currentQuestion.correct].classList.add('correct');
-            }
-            
-            document.getElementById('next-btn').style.display = 'block';
-        }
-
-        function loadNextQuestion() {
-            currentQuestionIndex = (currentQuestionIndex + 1) % quizData.length;
-            displayQuestion();
-        }
-
-        // Initialize quiz on load
-        window.onload = function() {
-            displayQuestion();
-        };
+        // Esegui il calcolo all'avvio
+        window.onload = getLunarPhase;
     </script>
 </body>
 </html>
