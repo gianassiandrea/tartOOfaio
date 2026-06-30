@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scorzone Estivo - Scheda Tecnica</title>
+    <style>
+        :root { --primary: #5c4033; --primary-light: #8b5a2b; --accent: #d2b48c; --bg: #fdfbf7; --card-bg: #ffffff; --text: #2e2520; --text-light: #6e6259; --border: #e8e2da; --success: #4a7c59; --info-bg: #eef5f0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 80px; }
+        header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 25px 20px; text-align: center; border-bottom: 5px solid var(--accent); }
+        header h1 { font-size: 2.2rem; margin-bottom: 5px; }
+        nav { background-color: #efeae2; padding: 10px; text-align: center; border-bottom: 1px solid var(--border); }
+        nav a { color: var(--primary); text-decoration: none; font-weight: bold; padding: 8px 16px; margin: 0 5px; border-radius: 4px; }
+        nav a:hover { background-color: var(--card-bg); }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 20px; }
+        .top-info-bar { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+        .lunar-widget { display: inline-flex; align-items: center; background: #2e2520; color: #fff; padding: 10px 18px; border-radius: 30px; cursor: help; position: relative; font-weight: 600; margin-bottom: 15px; }
+        .lunar-widget .moon-icon { font-size: 1.6rem; margin-right: 10px; }
+        .lunar-widget .tooltip-text { visibility: hidden; width: 280px; background-color: #40322a; color: #fff; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; position: absolute; z-index: 100; top: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.9rem; }
+        .lunar-widget:hover .tooltip-text { visibility: visible; opacity: 1; }
+        .rule-box { background-color: var(--info-bg); border-left: 4px solid var(--success); padding: 12px 15px; border-radius: 0 8px 8px 0; font-size: 0.95rem; }
+        .specie-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; }
+        .specie-title h2 { color: var(--primary); font-size: 1.8rem; }
+        .specie-title em { color: var(--text-light); font-size: 1.2rem; display: block; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 25px; }
+        h3 { color: var(--primary-light); margin-bottom: 15px; font-size: 1.25rem; border-left: 3px solid var(--accent); padding-left: 10px; }
+        .img-placeholder { background-color: #eae3da; border: 2px dashed #c0b3a3; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #8a7b6c; text-align: center; padding: 20px; font-weight: 600; font-size: 0.9rem; min-height: 180px; margin-top: 10px; }
+        .img-placeholder img { width: 100%; height: auto; border-radius: 6px; display: block; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .botanica-card { background: #faf8f5; border: 1px solid var(--border); border-radius: 8px; padding: 15px; }
+        .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; }
+        .badge-allowed { background-color: #d4edda; color: #155724; }
+        footer { text-align: center; padding: 15px; color: var(--text-light); font-size: 0.85rem; background-color: #efeae2; position: fixed; bottom: 0; width: 100%; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+    <header><h1>Il Tartufaio</h1><p>Scheda Tecnica di Dettaglio</p></header>
+    <nav><a href="index.html">← Torna al Calendario</a></nav>
+    <div class="container">
+        <div class="top-info-bar">
+            <div class="lunar-widget" id="lunarWidget">
+                <span class="moon-icon" id="moonIcon">🌑</span><span id="moonPhaseName">Calcolo...</span>
+                <div class="tooltip-text" id="moonTooltip">Caricamento...</div>
+            </div>
+            <div class="rule-box">💡 <strong>La Regola della Buttata:</strong> Umidità + temperatura nei 10 giorni successivi a pioggia in luna crescente.</div>
+        </div>
+
+        <div class="card">
+            <div class="specie-title">
+                <div><h2>Scorzone Estivo</h2><em>Tuber aestivum Vittad.</em></div>
+                <span class="badge badge-allowed">Raccolta Aperta</span>
+            </div>
+            <p><strong>Periodo di raccolta:</strong> Dal 1 Maggio al 31 Agosto.</p>
+        </div>
+
+        <div class="card">
+            <h3>Descrizione Peridio e Gleba</h3>
+            <div class="grid-2">
+                <div>
+                    <p><strong>Peridio:</strong> Nero o brunastro, con verruche piramidali grandi, sporgenti e tipicamente scabre (da cui il nome scorzone).</p>
+                    <div class="img-placeholder"><img src="foto_peridio_scorzone.jpg" alt="Peridio" onerror="this.style.display='none';"><span>📸 Foto Peridio Scorzone</span></div>
+                </div>
+                <div>
+                    <p><strong>Gleba:</strong> Da giallastra a color nocciola, solcata da numerose venature biancastre più o meno sottili.</p>
+                    <div class="img-placeholder"><img src="foto_gleba_scorzone.jpg" alt="Gleba" onerror="this.style.display='none';"><span>📸 Foto Gleba Scorzone</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Tipo di Terreno</h3>
+            <p>Molto adattabile. Predilige suoli spiccatamente calcarei, ricchi di scheletro (sassi), asciutti e ben assolati. Tollera molto bene la siccità estiva e i terreni superficiali.</p>
+        </div>
+
+        <div class="card">
+            <h3>Piante Simbionti Principali</h3>
+            <div class="grid-2">
+                <div class="botanica-card"><h4>Roverella</h4><div class="img-placeholder"><img src="foto_roverella.jpg" alt="Roverella" onerror="this.style.display='none';"><span>📸 Foto Roverella (Albero/Foglia)</span></div></div>
+                <div class="botanica-card"><h4>Cerro</h4><div class="img-placeholder"><img src="foto_cerro.jpg" alt="Cerro" onerror="this.style.display='none';"><span>📸 Foto Cerro (Albero/Foglia)</span></div></div>
+                <div class="botanica-card"><h4>Faggio</h4><div class="img-placeholder"><img src="foto_faggio.jpg" alt="Faggio" onerror="this.style.display='none';"><span>📸 Foto Faggio (Albero/Foglia)</span></div></div>
+                <div class="botanica-card"><h4>Nocciolo</h4><div class="img-placeholder"><img src="foto_nocciolo.jpg" alt="Nocciolo" onerror="this.style.display='none';"><span>📸 Foto Nocciolo (Albero/Foglia)</span></div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Piante Comari (Indicatori)</h3>
+            <div class="grid-2">
+                <div class="botanica-card"><h4>Ginepro Comune</h4><div class="img-placeholder"><img src="foto_ginepro.jpg" alt="Ginepro" onerror="this.style.display='none';"><span>📸 Foto Ginepro</span></div></div>
+                <div class="botanica-card"><h4>Cisto</h4><div class="img-placeholder"><img src="foto_cisto.jpg" alt="Cisto" onerror="this.style.display='none';"><span>📸 Foto Cisto</span></div></div>
+            </div>
+        </div>
+    </div>
+    <footer>Vademecum Tartufaio Digitale &copy; 2026</footer>
+    <script>
+        function getLunarPhase() {
+            const now = new Date(); const refDate = new Date(2000, 0, 6); const diffDays = (now - refDate) / (1000 * 60 * 60 * 24); const phasePct = (diffDays / 29.530588853) % 1;
+            let icon = "🌑"; let name = "Luna Nuova"; let advice = "Fase di riposo miceliare.";
+            if (phasePct >= 0.03 && phasePct < 0.22) { icon = "🌓"; name = "Luna Crescente"; advice = "Se piove ora, la buttata è vicina!"; }
+            else if (phasePct >= 0.22 && phasePct < 0.28) { icon = "🌓"; name = "Primo Quarto"; advice = "Spinta per lo sviluppo iniziale."; }
+            else if (phasePct >= 0.28 && phasePct < 0.47) { icon = "🌔"; name = "Gibbosa Crescente"; advice = "Aromi in formazione."; }
+            else if (phasePct >= 0.47 && phasePct < 0.53) { icon = "🌕"; name = "Luna Piena"; advice = "Massimo sviluppo aromatico. Ottima percezione del cane."; }
+            else if (phasePct >= 0.53 && phasePct < 0.72) { icon = "◗"; name = "Gibbosa Calante"; advice = "I tartufi si consolidano."; }
+            else if (phasePct >= 0.72 && phasePct < 0.78) { icon = "🌗"; name = "Ultimo Quarto"; advice = "Ottima conservabilità."; }
+            else if (phasePct >= 0.78 || phasePct < 0.03) { icon = "🌘"; name = "Luna Calante"; advice = "Esemplari sodi prima del nuovo ciclo."; }
+            document.getElementById('moonIcon').innerText = icon; document.getElementById('moonPhaseName').innerText = "Luna Oggi: " + name; document.getElementById('moonTooltip').innerHTML = "<strong>Consiglio:</strong> " + advice;
+        }
+        window.onload = getLunarPhase;
+    </script>
+</body>
+</html>
