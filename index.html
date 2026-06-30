@@ -30,24 +30,26 @@
 
         .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
 
-        /* WIDGET BAR */
-        .top-info-bar { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        /* WIDGET BAR - CENTRATURA LUNA ED ELIMINAZIONE ETICHETTE */
+        .top-info-bar { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); text-align: center; }
         
-        .lunar-widget { display: inline-flex; align-items: center; background: #2e2520; color: #fff; padding: 10px 18px; border-radius: 30px; cursor: help; position: relative; font-weight: 600; margin-bottom: 15px; width: 100%; max-width: max-content; }
+        /* Centratura responsive del widget lunare */
+        .lunar-widget { display: inline-flex; align-items: center; justify-content: center; background: #2e2520; color: #fff; padding: 10px 18px; border-radius: 30px; cursor: help; position: relative; font-weight: 600; margin: 0 auto 15px auto; width: auto; }
         .lunar-widget .moon-icon { font-size: 1.6rem; margin-right: 10px; }
-        .lunar-widget .tooltip-text { visibility: hidden; width: 280px; background-color: #40322a; color: #fff; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; position: absolute; z-index: 100; top: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.9rem; font-weight: normal; }
+        .lunar-widget .tooltip-text { visibility: hidden; width: 280px; background-color: #40322a; color: #fff; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; position: absolute; z-index: 100; top: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.9rem; font-weight: normal; text-align: left; }
         .lunar-widget:hover .tooltip-text, .lunar-widget:active .tooltip-text { visibility: visible; opacity: 1; }
 
-        /* WEATHER WIDGET */
-        .weather-widget { background: var(--weather-bg); border-radius: 8px; border: 1px solid var(--border); padding: 15px; margin-top: 5px; }
-        .weather-widget h4 { color: var(--primary); margin-bottom: 10px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-        .weather-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 12px; }
-        .weather-day { background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px; text-align: center; font-size: 0.9rem; }
-        .weather-day .day-title { font-weight: bold; color: var(--primary-light); margin-bottom: 4px; }
-        .weather-day .day-temp { font-size: 1.1rem; font-weight: bold; margin: 4px 0; }
-        .weather-astro { border-top: 1px dashed var(--border); padding-top: 10px; display: flex; justify-content: space-around; font-size: 0.9rem; color: var(--text-light); }
+        /* NUOVO LAYOUT COMPATTO METEO A REFFANGOLI AFFIANCATI */
+        .weather-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 5px 0 12px 0; }
+        .weather-day { background: var(--weather-bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px; text-align: center; font-size: 0.85rem; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .weather-day.today-active { border: 2px solid var(--accent); background: #fff; }
+        .weather-day .day-title { font-weight: bold; color: var(--primary-light); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 2px; }
+        .weather-day .day-icon { font-size: 1.4rem; margin: 2px 0; }
+        .weather-day .day-temp { font-size: 0.9rem; font-weight: bold; color: var(--text); }
+        
+        .weather-astro { border-top: 1px dashed var(--border); padding-top: 8px; display: flex; justify-content: space-around; font-size: 0.85rem; color: var(--text-light); }
 
-        .card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(92, 64, 51, 0.03); }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(92, 64, 51, 0.03); text-align: left; }
         h2 { color: var(--primary); margin-bottom: 15px; font-size: 1.4rem; }
 
         .clickable-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -71,6 +73,9 @@
             .clickable-table td:last-child { border-bottom: none; }
             .clickable-table td::before { content: attr(data-label); position: absolute; left: 10px; width: 50%; text-align: left; font-weight: 600; color: var(--text-light); }
             .clickable-table tr.row-link td a { display: inline; }
+            .weather-grid { gap: 6px; }
+            .weather-day { padding: 6px; font-size: 0.8rem; }
+            .weather-day .day-icon { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -88,35 +93,35 @@
 
     <div class="container">
         <div class="top-info-bar">
+            <!-- Widget Lunare Centrato -->
             <div class="lunar-widget" id="lunarWidget">
                 <span class="moon-icon" id="moonIcon">🌑</span>
                 <span id="moonPhaseName">Calcolo Fase...</span>
                 <div class="tooltip-text" id="moonTooltip">Caricamento consiglio della tradizione...</div>
             </div>
 
-            <div class="weather-widget">
-                <h4>📍 <span id="weather-status">Rilevamento posizione in corso...</span></h4>
-                <div class="weather-grid">
-                    <div class="weather-day">
-                        <div class="day-title">Ieri</div>
-                        <div class="day-temp" id="temp-yesterday">-- °C</div>
-                        <div style="font-size:0.75rem; color:var(--text-light);" id="cond-yesterday">--</div>
-                    </div>
-                    <div class="weather-day" style="border: 2px solid var(--accent); background: #fff;">
-                        <div class="day-title">Oggi</div>
-                        <div class="day-temp" id="temp-today">-- °C</div>
-                        <div style="font-size:0.75rem; color:var(--text-light);" id="cond-today">--</div>
-                    </div>
-                    <div class="weather-day">
-                        <div class="day-title">Domani</div>
-                        <div class="day-temp" id="temp-tomorrow">-- °C</div>
-                        <div style="font-size:0.75rem; color:var(--text-light);" id="cond-tomorrow">--</div>
-                    </div>
+            <!-- RETTANGOLI METEO AFFIANCATI E COMPATTI -->
+            <div class="weather-grid">
+                <div class="weather-day">
+                    <div class="day-title">Ieri</div>
+                    <div class="day-icon" id="icon-yesterday">🌫️</div>
+                    <div class="day-temp" id="temp-yesterday">--°C</div>
                 </div>
-                <div class="weather-astro">
-                    <div>🌅 Alba: <strong id="astro-sunrise">--:--</strong></div>
-                    <div>🌇 Tramonto: <strong id="astro-sunset">--:--</strong></div>
+                <div class="weather-day today-active">
+                    <div class="day-title">Oggi</div>
+                    <div class="day-icon" id="icon-today">🌫️</div>
+                    <div class="day-temp" id="temp-today">--°C</div>
                 </div>
+                <div class="weather-day">
+                    <div class="day-title">Domani</div>
+                    <div class="day-icon" id="icon-tomorrow">🌫️</div>
+                    <div class="day-temp" id="temp-tomorrow">--°C</div>
+                </div>
+            </div>
+            
+            <div class="weather-astro">
+                <div>🌅 Alba: <strong id="astro-sunrise">--:--</strong></div>
+                <div>🌇 Tramonto: <strong id="astro-sunset">--:--</strong></div>
             </div>
         </div>
 
@@ -181,69 +186,50 @@
     <footer>Vademecum Tartufaio Digitale &copy; 2026</footer>
 
     <script>
-        // TRADUTTORE CODICI METEO WMO
-        function parseWmoCode(code) {
-            if (code <= 1) return "☀️ Sereno";
-            if (code <= 3) return "⛅ Poco Nuvoloso";
-            if (code <= 48) return "🌫️ Nebbia";
-            if (code <= 65) return "🌧️ Pioggia";
-            if (code <= 77) return "❄️ Neve";
-            if (code <= 82) return "🌦️ Rovesci Pioggia";
-            return "⛈️ Temporale";
+        function parseWmoIcon(code) {
+            if (code <= 1) return "☀️";
+            if (code <= 3) return "⛅";
+            if (code <= 48) return "🌫️";
+            if (code <= 65) return "🌧️";
+            if (code <= 77) return "❄️";
+            if (code <= 82) return "🌦️";
+            return "⛈️";
         }
 
-        // SISTEMA GEOLOCALIZZAZIONE E API METEO
         function caricaMeteoReale() {
-            if (!navigator.geolocation) {
-                document.getElementById('weather-status').innerText = "Meteo: Geolocalizzazione non supportata";
-                return;
-            }
+            if (!navigator.geolocation) return;
 
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    const lat = position.coords.latitude.toFixed(4);
-                    const lon = position.coords.longitude.toFixed(4);
-                    document.getElementById('weather-status').innerText = `Meteo Bosco (Lat: ${lat}, Lon: ${lon})`;
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude.toFixed(4);
+                const lon = position.coords.longitude.toFixed(4);
 
-                    try {
-                        // Chiamata API aperta a open-meteo con i parametri temporali passati, presenti e futuri
-                        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset&timezone=auto&past_days=1`;
-                        const response = await fetch(url);
-                        const data = await response.json();
+                try {
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset&timezone=auto&past_days=1`;
+                    const response = await fetch(url);
+                    const data = await response.json();
 
-                        if (data && data.daily) {
-                            // Indici dei dati daily ritornati: 0 = Ieri, 1 = Oggi, 2 = Domani
-                            const d = data.daily;
+                    if (data && data.daily) {
+                        const d = data.daily;
 
-                            // Ieri
-                            document.getElementById('temp-yesterday').innerText = `${Math.round(d.temperature_2m_min[0])}° / ${Math.round(d.temperature_2m_max[0])}°`;
-                            document.getElementById('cond-yesterday').innerText = parseWmoCode(d.weathercode[0]);
+                        // Ieri
+                        document.getElementById('temp-yesterday').innerText = `${Math.round(d.temperature_2m_min[0])}° / ${Math.round(d.temperature_2m_max[0])}°`;
+                        document.getElementById('icon-yesterday').innerText = parseWmoIcon(d.weathercode[0]);
 
-                            // Oggi
-                            document.getElementById('temp-today').innerText = `${Math.round(d.temperature_2m_min[1])}° / ${Math.round(d.temperature_2m_max[1])}°`;
-                            document.getElementById('cond-today').innerText = parseWmoCode(d.weathercode[1]);
-                            
-                            // Estrazione orari Alba e Tramonto di oggi (formato ISO string, prendiamo solo ore e minuti)
-                            const albaOggi = d.sunrise[1].split("T")[1];
-                            const tramontoOggi = d.sunset[1].split("T")[1];
-                            document.getElementById('astro-sunrise').innerText = albaOggi;
-                            document.getElementById('astro-sunset').innerText = tramontoOggi;
+                        // Oggi
+                        document.getElementById('temp-today').innerText = `${Math.round(d.temperature_2m_min[1])}° / ${Math.round(d.temperature_2m_max[1])}°`;
+                        document.getElementById('icon-today').innerText = parseWmoIcon(d.weathercode[1]);
+                        
+                        document.getElementById('astro-sunrise').innerText = d.sunrise[1].split("T")[1];
+                        document.getElementById('astro-sunset').innerText = d.sunset[1].split("T")[1];
 
-                            // Domani
-                            document.getElementById('temp-tomorrow').innerText = `${Math.round(d.temperature_2m_min[2])}° / ${Math.round(d.temperature_2m_max[2])}°`;
-                            document.getElementById('cond-tomorrow').innerText = parseWmoCode(d.weathercode[2]);
-                        }
-                    } catch (error) {
-                        document.getElementById('weather-status').innerText = "Errore nel caricamento dei dati meteo";
+                        // Domani
+                        document.getElementById('temp-tomorrow').innerText = `${Math.round(d.temperature_2m_min[2])}° / ${Math.round(d.temperature_2m_max[2])}°`;
+                        document.getElementById('icon-tomorrow').innerText = parseWmoIcon(d.weathercode[2]);
                     }
-                },
-                (error) => {
-                    document.getElementById('weather-status').innerText = "Attiva il GPS per il meteo locale";
-                }
-            );
+                } catch (e) {}
+            });
         }
 
-        // CALENDARIO DINAMICO
         function setupCalendario() {
             const now = new Date();
             const currentMonth = now.getMonth() + 1;
@@ -286,7 +272,6 @@
             rows.forEach(row => tbody.appendChild(row));
         }
 
-        // FASE LUNARE
         function getLunarPhase() {
             const now = new Date();
             const refDate = new Date(2000, 0, 6);
