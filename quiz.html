@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Il Tartufaio - Simulatore Esame (Dark)</title>
+    <style>
+        :root {
+            --bg: #1e1a17; /* Sfondo principale scuro */
+            --card-bg: #29231f; /* Sfondo della scheda quiz */
+            --primary: #8b5a2b;
+            --primary-light: #b07d4f;
+            --accent: #d2b48c;
+            --text: #f5ebe6; /* Testo chiaro leggibile */
+            --text-light: #a89990;
+            --border: #3d342e;
+            --success: #3b6347;
+            --danger: #96382b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 80px; }
+
+        header { background: linear-gradient(135deg, #1a1310, #2d201a); color: white; padding: 25px 20px; text-align: center; border-bottom: 3px solid var(--accent); }
+        header h1 { font-size: 2.2rem; margin-bottom: 5px; color: var(--accent); }
+
+        nav { background-color: #14100e; padding: 10px; text-align: center; border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: 10px; }
+        nav a { color: var(--text-light); text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 4px; transition: background 0.2s, color 0.2s; }
+        nav a:hover, nav a.active { background-color: var(--card-bg); color: var(--accent); }
+
+        .container { max-width: 700px; margin: 30px auto; padding: 0 15px; }
+
+        /* CONTENITORE QUIZ DARK */
+        .card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        h2 { color: var(--accent); margin-bottom: 15px; font-size: 1.4rem; border-bottom: 2px solid var(--border); padding-bottom: 8px; }
+        
+        .quiz-progress { font-size: 0.85rem; color: var(--text-light); margin-bottom: 15px; font-weight: 600; letter-spacing: 0.5px; }
+        .question-text { font-size: 1.15rem; font-weight: bold; color: var(--text); margin-bottom: 25px; }
+
+        /* PULSANTI OPZIONI IN TESSITURA SCURA */
+        .option-btn { display: block; width: 100%; padding: 14px 16px; margin-bottom: 12px; background-color: #211c19; border: 1px solid var(--border); border-radius: 8px; text-align: left; cursor: pointer; font-size: 1rem; transition: all 0.2s; color: var(--text); }
+        .option-btn:hover:not([disabled]) { background-color: #332b26; border-color: var(--primary); }
+        
+        /* Stati di risposta corretta/errata tarati per il buio */
+        .option-btn.correct { background-color: rgba(59, 99, 71, 0.4) !important; border-color: #518c63 !important; color: #a1e0b3 !important; font-weight: bold; }
+        .option-btn.wrong { background-color: rgba(150, 56, 43, 0.4) !important; border-color: #bf4d3d !important; color: #f2aba2 !important; }
+
+        /* BOTTONI DI AZIONE */
+        .action-box { margin-top: 20px; min-height: 45px; }
+        .btn-next { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; float: right; transition: background 0.2s; }
+        .btn-next:hover { background-color: var(--primary-light); }
+        
+        /* SCHERMATA FINALE */
+        .results-box { text-align: center; padding: 20px 0; }
+        .score-text { font-size: 2.5rem; font-weight: bold; color: var(--accent); margin: 15px 0; }
+        .btn-restart { background-color: var(--success); color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; transition: background 0.2s; margin-top: 15px; }
+        .btn-restart:hover { background-color: #4a7a58; }
+
+        footer { text-align: center; padding: 15px; color: var(--text-light); font-size: 0.85rem; background-color: #14100e; position: fixed; bottom: 0; width: 100%; border-top: 1px solid var(--border); z-index: 10; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Il Tartufaio</h1>
+        <p>Simulatore Esame Abilitazione</p>
+    </header>
+
+    <nav>
+        <a href="index.html">📅 Home / Calendario</a>
+        <a href="quiz.html" class="active">🎓 Simulatore Esame</a>
+    </nav>
+
+    <div class="container">
+        <div class="card" id="quiz-card">
+            <h2>Test d'Esame Ufficiale</h2>
+            
+            <div id="quiz-gameplay">
+                <div class="quiz-progress" id="progress-text">Domanda 1 di X</div>
+                <div class="question-text" id="question-text">Caricamento della domanda...</div>
+                <div id="options-container"></div>
+                
+                <div class="action-box">
+                    <button id="next-btn" class="btn-next" style="display:none;" onclick="nextQuestion()">Prossima Domanda →</button>
+                </div>
+            </div>
+
+            <div id="quiz-results" class="results-box" style="display: none;">
+                <h3>Simulazione Completata!</h3>
+                <p>Hai risposto correttamente a:</p>
+                <div class="score-text" id="score-text">0 / 0</div>
+                <p id="feedback-text">Continua a studiare le schede dei terreni per migliorare!</p>
+                <button class="btn-restart" onclick="restartQuiz()">Ricomincia il Test</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>Vademecum Tartufaio Digitale &copy; 2026</footer>
+
+    <script>
+        const quizData = [
+            {
+                q: "Qual è il nome latino corretto del Tartufo Bianco Pregiato?",
+                options: ["Tuber magnatum Pico", "Tuber albidum Pico", "Tuber borchii Vittad."],
+                correct: 0
+            },
+            {
+                q: "Come si presenta il peridio (esterno) del Tuber magnatum Pico?",
+                options: ["Liscio e di colore da giallo ocra a verdastro", "Interamente verrucoso, formato da grosse verruche nere", "Rugoso e di colore marrone scuro"],
+                correct: 0
+            },
+            {
+                q: "Quale delle seguenti specie è nota comunemente col nome di 'Scorzone'?",
+                options: ["Tuber macrosporum", "Tuber aestivum Vittad.", "Tuber mesentericum"],
+                correct: 1
+            },
+            {
+                q: "Cosa si intende per 'gleba' all'interno di un tartufo?",
+                options: ["Corteccia esterna protettiva", "La massa polposa interna contenente le spore", "Il sistema radicale dell'albero"],
+                correct: 1
+            },
+            {
+                q: "È consentito estrarre i tartufi smuovendo il terreno liberamente con zappe o vanghe agricole grandi?",
+                options: ["Sì, se il terreno circostante è molto compatto", "No, è vietato e danneggia gravemente il micelio sotterraneo", "Solo se si è da soli nel bosco"],
+                correct: 1
+            },
+            {
+                q: "Cosa è obbligatorio fare dopo aver estratto un esemplare di tartufo dalla buca?",
+                options: ["Lasciare la buca aperta per favorire l'ossigenazione", "Ricolmare immediatamente la buca con la stessa terra estratta e ripianarla", "Coprire la buca esclusivamente con foglie secche"],
+                correct: 1
+            },
+            {
+                q: "Quale combinazione botanica rappresenta una pianta simbionte e una pianta comare dello Scorzone Estivo?",
+                options: ["Roverella (simbionte) e Ginepro Comune (comare)", "Pino Marittimo (simbionte) e Sanguinello (comare)", "Faggio (simbionte) e Nocciolo selvatico (simbionte)"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function displayQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            document.getElementById('progress-text').innerText = `DOMANDA ${currentQuestionIndex + 1} DI ${quizData.length}`;
+            document.getElementById('question-text').innerText = currentQuestion.q;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('option-btn');
+                button.onclick = () => checkAnswer(index, button);
+                container.appendChild(button);
+            });
+            
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedIndex, clickedButton) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (selectedIndex === currentQuestion.correct) {
+                clickedButton.classList.add('correct');
+                score++;
+            } else {
+                clickedButton.classList.add('wrong');
+                buttons[currentQuestion.correct].classList.add('correct');
+            }
+            
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                displayQuestion();
+            } else {
+                document.getElementById('quiz-gameplay').style.display = 'none';
+                document.getElementById('quiz-results').style.display = 'block';
+                document.getElementById('score-text').innerText = `${score} / ${quizData.length}`;
+                
+                const percentage = (score / quizData.length) * 100;
+                const feedbackText = document.getElementById('feedback-text');
+                if (percentage === 100) {
+                    feedbackText.innerText = "🏆 Eccellente! Conosci perfettamente la materia, sei pronto per l'esame!";
+                } else if (percentage >= 70) {
+                    feedbackText.innerText = "👍 Ottimo lavoro! Hai una buona preparazione generale.";
+                } else {
+                    feedbackText.innerText = "📖 Ripassa le schede tecniche dei singoli tartufi e riprova!";
+                }
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('quiz-results').style.display = 'none';
+            document.getElementById('quiz-gameplay').style.display = 'block';
+            displayQuestion();
+        }
+
+        window.onload = displayQuestion;
+    </script>
+</body>
+</html>
