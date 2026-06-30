@@ -89,9 +89,9 @@
         </div>
 
         <div class="card">
-            <h2>Calendario di Raccolta Nazionale Completo</h2>
+            <h2>Calendario di Raccolta Nazionale Dinamico</h2>
             <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">
-                👉 <i>Clicca su una varietà di tartufo per aprire la sua scheda tecnica.</i>
+                ℹ️ <i>L'elenco mostra automaticamente per prime le specie con <b>raccolta aperta oggi</b>, seguite dalle restanti in ordine temporale di apertura durante l'anno.</i>
             </p>
             
             <table class="clickable-table">
@@ -103,48 +103,48 @@
                         <th>Stato</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="row-link" onclick="window.location.href='bianco_pregiato.html'">
+                <tbody id="calendario-body">
+                    <tr class="row-link" data-file="bianco_pregiato.html" data-start-m="9" data-start-d="10" data-end-m="1" data-end-d="31">
                         <td data-label="Specie:"><a href="bianco_pregiato.html">Tartufo Bianco Pregiato</a></td>
                         <td data-label="Scientifico:"><i>Tuber magnatum Pico</i></td>
                         <td data-label="Periodo:">10 Set - 31 Gen</td>
-                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Stato:"><span class="badge"></span></td>
                     </tr>
-                    <tr class="row-link" onclick="window.location.href='nero_pregiato.html'">
+                    <tr class="row-link" data-file="nero_pregiato.html" data-start-m="11" data-start-d="15" data-end-m="3" data-end-d="15">
                         <td data-label="Specie:"><a href="nero_pregiato.html">Tartufo Nero Pregiato</a></td>
                         <td data-label="Scientifico:"><i>Tuber melanosporum Vittad.</i></td>
                         <td data-label="Periodo:">15 Nov - 15 Mar</td>
-                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Stato:"><span class="badge"></span></td>
                     </tr>
-                    <tr class="row-link" onclick="window.location.href='scorzone_estivo.html'">
+                    <tr class="row-link" data-file="scorzone_estivo.html" data-start-m="5" data-start-d="1" data-end-m="8" data-end-d="31">
                         <td data-label="Specie:"><a href="scorzone_estivo.html">Scorzone (Estivo)</a></td>
                         <td data-label="Scientifico:"><i>Tuber aestivum Vittad.</i></td>
                         <td data-label="Periodo:">01 Mag - 31 Ago</td>
-                        <td data-label="Stato:"><span class="badge badge-allowed">Aperto</span></td>
+                        <td data-label="Stato:"><span class="badge"></span></td>
                     </tr>
-                    <tr class="row-link" onclick="window.location.href='bianchetto_marzuolo.html'">
+                    <tr class="row-link" data-file="bianchetto_marzuolo.html" data-start-m="1" data-start-d="15" data-end-m="4" data-end-d="30">
                         <td data-label="Specie:"><a href="bianchetto_marzuolo.html">Bianchetto / Marzuolo</a></td>
                         <td data-label="Scientifico:"><i>Tuber borchii Vittad.</i></td>
                         <td data-label="Periodo:">15 Gen - 30 Apr</td>
-                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Stato:"><span class="badge"></span></td>
                     </tr>
-                    <tr class="row-link" onclick="window.location.href='uncinato.html'">
+                    <tr class="row-link" data-file="uncinato.html" data-start-m="10" data-start-d="1" data-end-m="12" data-end-d="31">
                         <td data-label="Specie:"><a href="uncinato.html">Tartufo Uncinato</a></td>
                         <td data-label="Scientifico:"><i>Tuber uncinatum Chatin</i></td>
                         <td data-label="Periodo:">01 Ott - 31 Dic</td>
-                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Stato:"><span class="badge"></span></td>
                     </tr>
-                    <tr class="row-link" onclick="window.location.href='brumale.html'">
+                    <tr class="row-link" data-file="brumale.html" data-start-m="1" data-start-d="1" data-end-m="3" data-end-d="15">
                         <td data-label="Specie:"><a href="brumale.html">Tartufo Nero Invernale</a></td>
                         <td data-label="Scientifico:"><i>Tuber brumale Vittad.</i></td>
                         <td data-label="Periodo:">01 Gen - 15 Mar</td>
-                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Stato:"><span class="badge"></span></td>
                     </tr>
-                    <tr class="row-link" onclick="window.location.href='moscato.html'">
+                    <tr class="row-link" data-file="moscato.html" data-start-m="11" data-start-d="15" data-end-m="3" data-end-d="15">
                         <td data-label="Specie:"><a href="moscato.html">Tartufo Moscato</a></td>
                         <td data-label="Scientifico:"><i>Tuber brumale var. moschatum Ferry</i></td>
                         <td data-label="Periodo:">15 Nov - 15 Mar</td>
-                        <td data-label="Stato:"><span class="badge badge-forbidden">Chiuso</span></td>
+                        <td data-label="Stato:"><span class="badge"></span></td>
                     </tr>
                 </tbody>
             </table>
@@ -154,6 +154,68 @@
     <footer>Vademecum Tartufaio Digitale &copy; 2026</footer>
 
     <script>
+        // FUNZIONE PER ELABORARE E RIORDINARE IL CALENDARIO
+        function setupCalendario() {
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1; // Gennaio è 0
+            const currentDay = now.getDate();
+
+            const tbody = document.getElementById('calendario-body');
+            const rows = Array.from(tbody.querySelectorAll('tr.row-link'));
+
+            rows.forEach(row => {
+                const startM = parseInt(row.getAttribute('data-start-m'));
+                const startD = parseInt(row.getAttribute('data-start-d'));
+                const endM = parseInt(row.getAttribute('data-end-m'));
+                const endD = parseInt(row.getAttribute('data-end-d'));
+                const targetFile = row.getAttribute('data-file');
+
+                // Assegna il click alla riga
+                row.onclick = () => window.location.href = targetFile;
+
+                // Controlla se la data odierna è all'interno dell'intervallo
+                let isOpen = false;
+                if (startM <= endM) {
+                    // Intervallo nello stesso anno solare (es. Maggio - Agosto)
+                    if (currentMonth > startM && currentMonth < endM) isOpen = true;
+                    else if (currentMonth === startM && currentDay >= startD) isOpen = true;
+                    else if (currentMonth === endM && currentDay <= endD) isOpen = true;
+                } else {
+                    // Intervallo che scavalca l'anno (es. Settembre - Gennaio)
+                    if (currentMonth > startM || currentMonth < endM) isOpen = true;
+                    else if (currentMonth === startM && currentDay >= startD) isOpen = true;
+                    else if (currentMonth === endM && currentDay <= endD) isOpen = true;
+                }
+
+                // Imposta lo stato grafico e un valore booleano per l'ordinamento
+                const badge = row.querySelector('.badge');
+                row.isOpen = isOpen;
+                if (isOpen) {
+                    badge.innerText = "Aperto";
+                    badge.className = "badge badge-allowed";
+                } else {
+                    badge.innerText = "Chiuso";
+                    badge.className = "badge badge-forbidden";
+                }
+
+                // Calcola il punteggio temporale per l'ordinamento cronologico di inizio raccolta (mesi 1-12)
+                row.sortOrder = startM * 100 + startD;
+            });
+
+            // LOGICA DI ORDINAMENTO: Aperto prima, poi ordinamento cronologico d'inizio raccolta
+            rows.sort((a, b) => {
+                if (a.isOpen && !b.isOpen) return -1;
+                if (!a.isOpen && b.isOpen) return 1;
+                // Se entrambi sono aperti o entrambi sono chiusi, ordina per data di inizio
+                return a.sortOrder - b.sortOrder;
+            });
+
+            // Svuota e ripopola il corpo della tabella ordinato
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // SCRIPT LUNARE MATEMATICO
         function getLunarPhase() {
             const now = new Date();
             const refDate = new Date(2000, 0, 6);
@@ -172,7 +234,11 @@
             document.getElementById('moonPhaseName').innerText = "Luna Oggi: " + name;
             document.getElementById('moonTooltip').innerHTML = "<strong>Consiglio:</strong> " + advice;
         }
-        window.onload = getLunarPhase;
+
+        window.onload = function() {
+            getLunarPhase();
+            setupCalendario();
+        };
     </script>
 </body>
 </html>
