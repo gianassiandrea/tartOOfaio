@@ -15,7 +15,7 @@
             --text-light: #6e6259;
             --border: #e8e2da;
             --success: #4a7c59;
-            --info-bg: #eef5f0;
+            --weather-bg: #f4f0ea;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -30,12 +30,22 @@
 
         .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
 
+        /* WIDGET BAR */
         .top-info-bar { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        
         .lunar-widget { display: inline-flex; align-items: center; background: #2e2520; color: #fff; padding: 10px 18px; border-radius: 30px; cursor: help; position: relative; font-weight: 600; margin-bottom: 15px; width: 100%; max-width: max-content; }
         .lunar-widget .moon-icon { font-size: 1.6rem; margin-right: 10px; }
         .lunar-widget .tooltip-text { visibility: hidden; width: 280px; background-color: #40322a; color: #fff; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; position: absolute; z-index: 100; top: 125%; left: 50%; transform: translateX(-50%); opacity: 0; transition: opacity 0.3s; font-size: 0.9rem; font-weight: normal; }
         .lunar-widget:hover .tooltip-text, .lunar-widget:active .tooltip-text { visibility: visible; opacity: 1; }
-        .rule-box { background-color: var(--info-bg); border-left: 4px solid var(--success); padding: 12px 15px; border-radius: 0 8px 8px 0; font-size: 0.95rem; }
+
+        /* WEATHER WIDGET */
+        .weather-widget { background: var(--weather-bg); border-radius: 8px; border: 1px solid var(--border); padding: 15px; margin-top: 5px; }
+        .weather-widget h4 { color: var(--primary); margin-bottom: 10px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+        .weather-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 12px; }
+        .weather-day { background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px; text-align: center; font-size: 0.9rem; }
+        .weather-day .day-title { font-weight: bold; color: var(--primary-light); margin-bottom: 4px; }
+        .weather-day .day-temp { font-size: 1.1rem; font-weight: bold; margin: 4px 0; }
+        .weather-astro { border-top: 1px dashed var(--border); padding-top: 10px; display: flex; justify-content: space-around; font-size: 0.9rem; color: var(--text-light); }
 
         .card { background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(92, 64, 51, 0.03); }
         h2 { color: var(--primary); margin-bottom: 15px; font-size: 1.4rem; }
@@ -83,25 +93,42 @@
                 <span id="moonPhaseName">Calcolo Fase...</span>
                 <div class="tooltip-text" id="moonTooltip">Caricamento consiglio della tradizione...</div>
             </div>
-            <div class="rule-box">
-                💡 <strong>La Regola della Buttata:</strong> L'umidità ottimale del terreno unita a una temperatura stabile nei <strong>10 giorni successivi a una pioggia in luna crescente</strong> crea le condizioni perfette.
+
+            <div class="weather-widget">
+                <h4>📍 <span id="weather-status">Rilevamento posizione in corso...</span></h4>
+                <div class="weather-grid">
+                    <div class="weather-day">
+                        <div class="day-title">Ieri</div>
+                        <div class="day-temp" id="temp-yesterday">-- °C</div>
+                        <div style="font-size:0.75rem; color:var(--text-light);" id="cond-yesterday">--</div>
+                    </div>
+                    <div class="weather-day" style="border: 2px solid var(--accent); background: #fff;">
+                        <div class="day-title">Oggi</div>
+                        <div class="day-temp" id="temp-today">-- °C</div>
+                        <div style="font-size:0.75rem; color:var(--text-light);" id="cond-today">--</div>
+                    </div>
+                    <div class="weather-day">
+                        <div class="day-title">Domani</div>
+                        <div class="day-temp" id="temp-tomorrow">-- °C</div>
+                        <div style="font-size:0.75rem; color:var(--text-light);" id="cond-tomorrow">--</div>
+                    </div>
+                </div>
+                <div class="weather-astro">
+                    <div>🌅 Alba: <strong id="astro-sunrise">--:--</strong></div>
+                    <div>🌇 Tramonto: <strong id="astro-sunset">--:--</strong></div>
+                </div>
             </div>
         </div>
 
         <div class="card">
             <h2>Calendario di Raccolta Nazionale Dinamico</h2>
             <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95rem;">
-                ℹ️ <i>L'elenco mostra automaticamente per prime le specie con <b>raccolta aperta oggi</b>, seguite dalle restanti in ordine temporale di apertura durante l'anno.</i>
+                ℹ️ <i>L'elenco mostra automaticamente per prime le specie con <b>raccolta aperta oggi</b>, seguite dalle restanti in ordine temporale.</i>
             </p>
             
             <table class="clickable-table">
                 <thead>
-                    <tr>
-                        <th>Specie / Varietà</th>
-                        <th>Nome Scientifico</th>
-                        <th>Periodo Legale</th>
-                        <th>Stato</th>
-                    </tr>
+                    <tr><th>Specie / Varietà</th><th>Nome Scientifico</th><th>Periodo Legale</th><th>Stato</th></tr>
                 </thead>
                 <tbody id="calendario-body">
                     <tr class="row-link" data-file="bianco_pregiato.html" data-start-m="9" data-start-d="10" data-end-m="1" data-end-d="31">
@@ -154,12 +181,73 @@
     <footer>Vademecum Tartufaio Digitale &copy; 2026</footer>
 
     <script>
-        // FUNZIONE PER ELABORARE E RIORDINARE IL CALENDARIO
+        // TRADUTTORE CODICI METEO WMO
+        function parseWmoCode(code) {
+            if (code <= 1) return "☀️ Sereno";
+            if (code <= 3) return "⛅ Poco Nuvoloso";
+            if (code <= 48) return "🌫️ Nebbia";
+            if (code <= 65) return "🌧️ Pioggia";
+            if (code <= 77) return "❄️ Neve";
+            if (code <= 82) return "🌦️ Rovesci Pioggia";
+            return "⛈️ Temporale";
+        }
+
+        // SISTEMA GEOLOCALIZZAZIONE E API METEO
+        function caricaMeteoReale() {
+            if (!navigator.geolocation) {
+                document.getElementById('weather-status').innerText = "Meteo: Geolocalizzazione non supportata";
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude.toFixed(4);
+                    const lon = position.coords.longitude.toFixed(4);
+                    document.getElementById('weather-status').innerText = `Meteo Bosco (Lat: ${lat}, Lon: ${lon})`;
+
+                    try {
+                        // Chiamata API aperta a open-meteo con i parametri temporali passati, presenti e futuri
+                        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,weathercode,sunrise,sunset&timezone=auto&past_days=1`;
+                        const response = await fetch(url);
+                        const data = await response.json();
+
+                        if (data && data.daily) {
+                            // Indici dei dati daily ritornati: 0 = Ieri, 1 = Oggi, 2 = Domani
+                            const d = data.daily;
+
+                            // Ieri
+                            document.getElementById('temp-yesterday').innerText = `${Math.round(d.temperature_2m_min[0])}° / ${Math.round(d.temperature_2m_max[0])}°`;
+                            document.getElementById('cond-yesterday').innerText = parseWmoCode(d.weathercode[0]);
+
+                            // Oggi
+                            document.getElementById('temp-today').innerText = `${Math.round(d.temperature_2m_min[1])}° / ${Math.round(d.temperature_2m_max[1])}°`;
+                            document.getElementById('cond-today').innerText = parseWmoCode(d.weathercode[1]);
+                            
+                            // Estrazione orari Alba e Tramonto di oggi (formato ISO string, prendiamo solo ore e minuti)
+                            const albaOggi = d.sunrise[1].split("T")[1];
+                            const tramontoOggi = d.sunset[1].split("T")[1];
+                            document.getElementById('astro-sunrise').innerText = albaOggi;
+                            document.getElementById('astro-sunset').innerText = tramontoOggi;
+
+                            // Domani
+                            document.getElementById('temp-tomorrow').innerText = `${Math.round(d.temperature_2m_min[2])}° / ${Math.round(d.temperature_2m_max[2])}°`;
+                            document.getElementById('cond-tomorrow').innerText = parseWmoCode(d.weathercode[2]);
+                        }
+                    } catch (error) {
+                        document.getElementById('weather-status').innerText = "Errore nel caricamento dei dati meteo";
+                    }
+                },
+                (error) => {
+                    document.getElementById('weather-status').innerText = "Attiva il GPS per il meteo locale";
+                }
+            );
+        }
+
+        // CALENDARIO DINAMICO
         function setupCalendario() {
             const now = new Date();
-            const currentMonth = now.getMonth() + 1; // Gennaio è 0
+            const currentMonth = now.getMonth() + 1;
             const currentDay = now.getDate();
-
             const tbody = document.getElementById('calendario-body');
             const rows = Array.from(tbody.querySelectorAll('tr.row-link'));
 
@@ -168,54 +256,37 @@
                 const startD = parseInt(row.getAttribute('data-start-d'));
                 const endM = parseInt(row.getAttribute('data-end-m'));
                 const endD = parseInt(row.getAttribute('data-end-d'));
-                const targetFile = row.getAttribute('data-file');
+                row.onclick = () => window.location.href = row.getAttribute('data-file');
 
-                // Assegna il click alla riga
-                row.onclick = () => window.location.href = targetFile;
-
-                // Controlla se la data odierna è all'interno dell'intervallo
                 let isOpen = false;
                 if (startM <= endM) {
-                    // Intervallo nello stesso anno solare (es. Maggio - Agosto)
                     if (currentMonth > startM && currentMonth < endM) isOpen = true;
                     else if (currentMonth === startM && currentDay >= startD) isOpen = true;
                     else if (currentMonth === endM && currentDay <= endD) isOpen = true;
                 } else {
-                    // Intervallo che scavalca l'anno (es. Settembre - Gennaio)
                     if (currentMonth > startM || currentMonth < endM) isOpen = true;
                     else if (currentMonth === startM && currentDay >= startD) isOpen = true;
                     else if (currentMonth === endM && currentDay <= endD) isOpen = true;
                 }
 
-                // Imposta lo stato grafico e un valore booleano per l'ordinamento
                 const badge = row.querySelector('.badge');
                 row.isOpen = isOpen;
-                if (isOpen) {
-                    badge.innerText = "Aperto";
-                    badge.className = "badge badge-allowed";
-                } else {
-                    badge.innerText = "Chiuso";
-                    badge.className = "badge badge-forbidden";
-                }
-
-                // Calcola il punteggio temporale per l'ordinamento cronologico di inizio raccolta (mesi 1-12)
+                if (isOpen) { badge.innerText = "Aperto"; badge.className = "badge badge-allowed"; }
+                else { badge.innerText = "Chiuso"; badge.className = "badge badge-forbidden"; }
                 row.sortOrder = startM * 100 + startD;
             });
 
-            // LOGICA DI ORDINAMENTO: Aperto prima, poi ordinamento cronologico d'inizio raccolta
             rows.sort((a, b) => {
                 if (a.isOpen && !b.isOpen) return -1;
                 if (!a.isOpen && b.isOpen) return 1;
-                // Se entrambi sono aperti o entrambi sono chiusi, ordina per data di inizio
                 return a.sortOrder - b.sortOrder;
             });
 
-            // Svuota e ripopola il corpo della tabella ordinato
             tbody.innerHTML = '';
             rows.forEach(row => tbody.appendChild(row));
         }
 
-        // SCRIPT LUNARE MATEMATICO
+        // FASE LUNARE
         function getLunarPhase() {
             const now = new Date();
             const refDate = new Date(2000, 0, 6);
@@ -238,6 +309,7 @@
         window.onload = function() {
             getLunarPhase();
             setupCalendario();
+            caricaMeteoReale();
         };
     </script>
 </body>
