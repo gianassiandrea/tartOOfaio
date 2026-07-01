@@ -28,7 +28,7 @@
         nav a:hover, nav a.active { background-color: var(--card-bg); }
 
         /* Area Mappa a tutto schermo sotto i menu */
-        #map-container { flex: 1; position: relative; width: 100%; }
+        #map-container { flex: 1; position: relative; width: 100%; background-color: #e5e3df; }
         #map { width: 100%; height: 100%; z-index: 1; }
 
         /* Bottone Flottante GPS */
@@ -76,60 +76,50 @@
     <footer>Mappa Geoscopio RT &copy; 2026</footer>
 
     <script>
-        // Initialize map centered roughly on Tuscany
+        // Inizializza la mappa centrata sulla Toscana
         const map = L.map('map').setView([43.4000, 11.1000], 9);
 
-        // Mappa di base: OpenStreetMap (strade, sentieri e topografia base)
+        // Mappa di base sempre visibile (OpenStreetMap)
         const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
+            attribution: '&copy; OpenStreetMap'
         }).addTo(map);
 
-// CONFIGURAZIONE LIVELLI REGIONE TOSCANA (SERVER REALE GEOSCOPIO)
-const wmsUrl = "https://www502.regione.toscana.it/wmsre/com.rt.wms.RTwms/wms";
+        // URL del server WMS cartografico della Regione Toscana
+        const wmsUrl = "https://www502.regione.toscana.it/wmsre/com.rt.wms.RTwms/wms";
 
-// 1. Reticolo Idrografico Nazionale/Regionale completo
-const idrografia = L.tileLayer.wms(wmsUrl, {
-    layers: 'rt_idrografia.reticolo', // Verifica questo nome o usa il catastale sotto
-    format: 'image/png',
-    transparent: true,
-    version: '1.3.0',
-    crs: L.CRS.EPSG3857, // Forza la proiezione web corretta
-    attribution: 'Regione Toscana'
-}).addTo(map);
+        // 1. Livello Idrografico Regionale (Fiumi e Fossi)
+        const idrografia = L.tileLayer.wms(wmsUrl, {
+            layers: 'rt_idrografia.reticolo',
+            format: 'image/png',
+            transparent: true,
+            version: '1.3.0',
+            attribution: 'Regione Toscana'
+        }).addTo(map);
 
-// 2. Livello di Uso del Suolo (Boschi e vegetazione) aggiornato
-const usoSuolo = L.tileLayer.wms(wmsUrl, {
-    layers: 'rt_usosuolo.clc18', // Versione aggiornata al 2018 (clc18 invece di clc06)
-    format: 'image/png',
-    transparent: true,
-    version: '1.3.0',
-    opacity: 0.5,
-    crs: L.CRS.EPSG3857,
-    attribution: 'Regione Toscana'
+        // 2. Livello Uso del Suolo (Carta Forestale e dei Boschi)
+        const usoSuolo = L.tileLayer.wms(wmsUrl, {
+            layers: 'rt_usosuolo.clc18', // Versione aggiornata
+            format: 'image/png',
+            transparent: true,
+            version: '1.3.0',
+            opacity: 0.5, // Trasparenza per far leggere la mappa sotto
+            attribution: 'Regione Toscana'
+        }).addTo(map);
 
-    // LAYER DI TEST: Confini amministrativi regionali
-const confini = L.tileLayer.wms(wmsUrl, {
-    layers: 'rt_confini.regione',
-    format: 'image/png',
-    transparent: true,
-    version: '1.3.0'
-
-}).addTo(map);
-
-        // Pannello di controllo dei livelli (Layer Control in alto a destra)
+        // Pannello di controllo dei livelli in alto a destra
         const baseMaps = {
-            "Mappa Sentieri (OSM)": osm
+            "🗺️ Mappa Base (OSM)": osm
         };
 
         const overlayMaps = {
             "🌊 Fiumi e Fossi (RT)": idrografia,
-            "🌳 Mappa Boschi / Suolo (RT)": usoSuolo
+            "🌳 Mappa Boschi (RT)": usoSuolo
         };
 
         L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
 
-        // GESTIONE GEOLOCALIZZAZIONE GPS IN TEMPO REALE
+        // GESTIONE GEOLOCALIZZAZIONE GPS
         let userMarker = null;
         let userCircle = null;
 
@@ -139,31 +129,27 @@ const confini = L.tileLayer.wms(wmsUrl, {
                 return;
             }
 
-            // Richiesta di posizione ad alta precisione (GPS)
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;
                     const lon = position.coords.longitude;
                     const accuracy = position.coords.accuracy;
 
-                    // Se esiste già il marker della tua posizione, rimuovilo prima di aggiornare
                     if (userMarker) {
                         map.removeLayer(userMarker);
                         map.removeLayer(userCircle);
                     }
 
-                    // Crea un pallino blu sulla tua posizione esatta nel bosco
                     userMarker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup(`<b>Sei qui</b><br>Accuratezza GPS: ${Math.round(accuracy)} metri`).openPopup();
+                        .bindPopup(`<b>Sei qui</b><br>Precisione: ${Math.round(accuracy)} metri`).openPopup();
 
-                    // Cerchio di tolleranza dell'accuratezza del segnale
                     userCircle = L.circle([lat, lon], { radius: accuracy, color: '#1a73e8', fillOpacity: 0.15 }).addTo(map);
 
-                    // Centra e zooma la mappa in modo ravvicinato sulla tua posizione
+                    // Zoom ravvicinato al terreno (scala 16) per forzare il caricamento dei fiumi minori e dei boschi
                     map.setView([lat, lon], 16);
                 },
                 (error) => {
-                    alert("Impossibile rilevare la posizione. Assicurati che il GPS sia attivo.");
+                    alert("Attiva il GPS o dai i permessi di posizione al browser.");
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
