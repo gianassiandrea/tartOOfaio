@@ -85,27 +85,37 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // CONFIGURAZIONE LIVELLI REGIONE TOSCANA (SERVER GEOSCOPIO WMS)
-        const wmsUrl = "https://www502.regione.toscana.it/wmsre/com.rt.wms.RTwms/wms";
+// CONFIGURAZIONE LIVELLI REGIONE TOSCANA (SERVER REALE GEOSCOPIO)
+const wmsUrl = "https://www502.regione.toscana.it/wmsre/com.rt.wms.RTwms/wms";
 
-        // 1. Livello Idrografico: Fiumi, fossi, torrenti e specchi d'acqua
-        const idrografia = L.tileLayer.wms(wmsUrl, {
-            layers: 'rt_idrografia.reticolo', // Nome del layer idrografico sul Geoscopio RT
-            format: 'image/png',
-            transparent: true,
-            version: '1.3.0',
-            attribution: 'Regione Toscana - Idrografia'
-        }).addTo(map); // Di base lo teniamo attivo all'avvio
+// 1. Reticolo Idrografico Nazionale/Regionale completo
+const idrografia = L.tileLayer.wms(wmsUrl, {
+    layers: 'rt_idrografia.reticolo', // Verifica questo nome o usa il catastale sotto
+    format: 'image/png',
+    transparent: true,
+    version: '1.3.0',
+    crs: L.CRS.EPSG3857, // Forza la proiezione web corretta
+    attribution: 'Regione Toscana'
+}).addTo(map);
 
-        // 2. Livello Uso del Suolo / Carta Forestale (Censimento arboreo e boscaglia)
-        const usoSuolo = L.tileLayer.wms(wmsUrl, {
-            layers: 'rt_usosuolo.clc06', // Layer del Geoscopio per la copertura boschiva / Corine Land Cover
-            format: 'image/png',
-            transparent: true,
-            version: '1.3.0',
-            opacity: 0.6, // Leggera trasparenza per far leggere i sentieri di OpenStreetMap sotto
-            attribution: 'Regione Toscana - Uso del Suolo'
-        }).addTo(map);
+// 2. Livello di Uso del Suolo (Boschi e vegetazione) aggiornato
+const usoSuolo = L.tileLayer.wms(wmsUrl, {
+    layers: 'rt_usosuolo.clc18', // Versione aggiornata al 2018 (clc18 invece di clc06)
+    format: 'image/png',
+    transparent: true,
+    version: '1.3.0',
+    opacity: 0.5,
+    crs: L.CRS.EPSG3857,
+    attribution: 'Regione Toscana'
+
+    // LAYER DI TEST: Confini amministrativi regionali
+const confini = L.tileLayer.wms(wmsUrl, {
+    layers: 'rt_confini.regione',
+    format: 'image/png',
+    transparent: true,
+    version: '1.3.0'
+
+}).addTo(map);
 
         // Pannello di controllo dei livelli (Layer Control in alto a destra)
         const baseMaps = {
