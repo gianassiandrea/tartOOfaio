@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Il Tartufaio - Mappa Ricerca</title>
+    <title>Il Tartufaio - Mappa Vegetazione</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -12,53 +12,28 @@
             --primary-light: #8b5a2b;
             --accent: #d2b48c;
             --bg: #fdfbf7;
-            --card-bg: #ffffff;
             --text: #2e2520;
             --border: #e8e2da;
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; height: 100vh; display: flex; flex-direction: column; }
-
-        header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 15px 20px; text-align: center; border-bottom: 3px solid var(--accent); }
-        header h1 { font-size: 1.8rem; }
-
-        nav { background-color: #efeae2; padding: 10px; text-align: center; border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: 10px; }
+        header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 15px; text-align: center; border-bottom: 3px solid var(--accent); }
+        nav { background-color: #efeae2; padding: 10px; text-align: center; display: flex; justify-content: center; gap: 10px; }
         nav a { color: var(--primary); text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 4px; }
-        nav a:hover, nav a.active { background-color: var(--card-bg); }
-
-        #map-container { flex: 1; position: relative; width: 100%; background-color: #e5e3df; }
-        #map { width: 100%; height: 100%; z-index: 1; }
-
-        .gps-btn {
-            position: absolute;
-            bottom: 25px;
-            left: 20px;
-            z-index: 1000;
-            background-color: #ffffff;
-            border: 2px solid rgba(0,0,0,0.2);
-            border-radius: 4px;
-            padding: 10px 14px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9rem;
-            color: #333;
-        }
-        .gps-btn:hover { background-color: #f4f4f4; }
-
-        footer { text-align: center; padding: 10px; color: #6e6259; font-size: 0.85rem; background-color: #efeae2; border-top: 1px solid var(--border); }
+        nav a.active { background-color: white; }
+        #map-container { flex: 1; position: relative; width: 100%; }
+        #map { width: 100%; height: 100%; }
+        .gps-btn { position: absolute; bottom: 25px; left: 20px; z-index: 1000; background: white; border: 2px solid rgba(0,0,0,0.2); padding: 10px; font-weight: bold; cursor: pointer; border-radius: 4px; box-shadow: 0 1px 5px rgba(0,0,0,0.4); }
+        
+        /* Stile personalizzato per i Popup informativi del bosco */
+        .leaflet-popup-content b { color: var(--primary); }
+        .popup-info-table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 0.85rem; }
+        .popup-info-table td { padding: 3px 0; border-bottom: 1px solid #eee; }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Il Tartufaio</h1>
-    </header>
-
+    <header><h1>Il Tartufaio</h1></header>
     <nav>
         <a href="index.html">📅 Calendario</a>
         <a href="ricerca.html" class="active">🗺️ Mappa Ricerca</a>
@@ -70,83 +45,102 @@
         <button class="gps-btn" onclick="trovaPosizione()">📍 Centra GPS</button>
     </div>
 
-    <footer>Mappa Ambientale Nazionale &copy; 2026</footer>
-
     <script>
-        // Inizializza la mappa centrata sulla Toscana
-        const map = L.map('map').setView([43.4000, 11.1000], 9);
+        // Inizializza la mappa sulla Toscana (zona Arezzo/Firenze prendendo Montemignaio come riferimento iniziale)
+        const map = L.map('map').setView([43.73, 11.63], 12);
 
-        // Mappa base stradale e sentieri (OpenStreetMap)
-        const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap'
-        }).addTo(map);
+        // Livelli base alternativi
+        const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+        const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
 
-        // 1. LIVELLO GEO-PORTALE NAZIONALE: RETICOLO IDROGRAFICO COMPLETO (HTTPS Sicuro)
-        const idrografia = L.tileLayer.wms("https://wms.pcn.minambiente.it/ogc/wms", {
-            layers: 'RN.RETICOLOIDROGRAFICO',
-            format: 'image/png',
-            transparent: true,
-            version: '1.1.1',
-            attribution: 'Ministero Ambiente'
-        }).addTo(map);
+        // FUNZIONE PER ASSEGNARE UN COLORE IN BASE AL TIPO DI ALBERO PRINCIPALE (SPECFOR_1 o CATFOR)
+        function prendiColoreAlbero(specie) {
+            if (!specie) return "#808080"; // Grigio se vuoto
+            
+            specie = specie.toLowerCase();
+            
+            if (specie.includes("pino") || specie.includes("conifere")) return "#1b4d3e"; // Verde scuro/pino
+            if (specie.includes("cerro") || specie.includes("quercia") || specie.includes("roverella")) return "#8b5a2b"; // Marrone quercia
+            if (specie.includes("faggio")) return "#a0522d"; // Siena/Faggete
+            if (specie.includes("pioppo") || specie.includes("ontano") || specie.includes("salice")) return "#228b22"; // Verde brillante (fiumi/umido)
+            if (specie.includes("castagno")) return "#cd853f"; // Arancio/Castagneti
+            if (specie.includes("nocciolo")) return "#d2b48c"; // Beige/Noccioli
+            
+            return "#556b2f"; // Verde oliva generico per altre latifoglie
+        }
 
-        // 2. LIVELLO GEO-PORTALE NAZIONALE: CARTA DELLA COPERTURA DEL SUOLO / BOSCHI (Corine Land Cover HTTPS)
-        const usoSuolo = L.tileLayer.wms("https://wms.pcn.minambiente.it/ogc/wms", {
-            layers: 'corine_land_cover_2018',
-            format: 'image/png',
-            transparent: true,
-            version: '1.1.1',
-            opacity: 0.45, // Sovrapposizione trasparente ottimale
-            attribution: 'Ministero Ambiente'
-        }).addTo(map);
+        // Funzione di stile dinamica per ogni poligono del GeoJSON
+        function stileBoscoDinamico(feature) {
+            // Estraiamo la specie principale (SPECFOR_1) o la categoria (CATFOR) per decidere il colore
+            const speciePrincipale = feature.properties.SPECFOR_1 || feature.properties.CATFOR || "";
+            return {
+                fillColor: prendiColoreAlbero(speciePrincipale),
+                weight: 1,
+                opacity: 0.7,
+                color: '#ffffff', // Bordo bianco sottile tra i vari boschi
+                fillOpacity: 0.55 // Abbastanza trasparente da far leggere il satellite o i sentieri sotto
+            };
+        }
 
-        // Pannello di controllo
+        const layerBoschiLocali = L.layerGroup().addTo(map);
+
+        // CARICAMENTO E COSTRUZIONE DELLA TABELLA INFORMATIVA AL CLICK
+        fetch('boschi_zona.geojson')
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    style: stileBoscoDinamico,
+                    onEachFeature: function (feature, layer) {
+                        if (feature.properties) {
+                            // Creiamo un contenuto HTML elegante che riproduce i dati essenziali della tua tabella
+                            let popupContent = `
+                                <div>
+                                    <h4>🌳 Dettaglio Bosco</h4>
+                                    <table class="popup-info-table">
+                                        <tr><td><b>Comune:</b></td><td>${feature.properties.NOME || '-'}</td></tr>
+                                        <tr><td><b>Categoria:</b></td><td>${feature.properties.CATFOR || '-'}</td></tr>
+                                        <tr><td><b>Struttura:</b></td><td>${feature.properties.COLT_AGGR || '-'} (${feature.properties.TIPO || '-'})</td></tr>
+                                        <tr><td><b>Albero 1:</b></td><td>${feature.properties.SPECFOR_1 || '-'}</td></tr>
+                                        <tr><td><b>Albero 2:</b></td><td>${feature.properties.SPECFOR_2 || '-'}</td></tr>
+                                        <tr><td><b>Quota media:</b></td><td>${feature.properties.QUOTA || '-'} m s.l.m.</td></tr>
+                                        <tr><td><b>Pendenza:</b></td><td>${feature.properties.PEND || '-'}%</td></tr>
+                                    </table>
+                                </div>
+                            `;
+                            layer.bindPopup(popupContent);
+                        }
+                    }
+                }).addTo(layerBoschiLocali);
+                
+                // Se vuoi che la mappa si adatti automaticamente all'estensione del file appena caricato:
+                // const geojsonLayer = L.geoJSON(data);
+                // map.fitBounds(geojsonLayer.getBounds());
+            })
+            .catch(err => console.error("Errore nel caricamento del file boschi_zona.geojson: ", err));
+
+        // Pannello di Controllo
         const baseMaps = {
-            "🗺️ Mappa Base (OSM)": osm
+            "🗺️ Mappa Stradale (OSM)": osm,
+            "🛰️ Vista Satellite (Esri)": satellite
         };
 
         const overlayMaps = {
-            "🌊 Fiumi e Fossi (PCN)": idrografia,
-            "🌳 Mappa Boschi (PCN)": usoSuolo
+            "🌳 Inventario Forestale RT": layerBoschiLocali
         };
 
         L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
 
-        // GEOLOCALIZZAZIONE GPS
-        let userMarker = null;
-        let userCircle = null;
-
+        // GPS
+        let userMarker, userCircle;
         function trovaPosizione() {
-            if (!navigator.geolocation) {
-                alert("La geolocalizzazione non è supportata dal tuo dispositivo.");
-                return;
-            }
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    const accuracy = position.coords.accuracy;
-
-                    if (userMarker) {
-                        map.removeLayer(userMarker);
-                        map.removeLayer(userCircle);
-                    }
-
-                    userMarker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup(`<b>Sei qui</b><br>Precisione GPS: ${Math.round(accuracy)} metri`).openPopup();
-
-                    userCircle = L.circle([lat, lon], { radius: accuracy, color: '#1a73e8', fillOpacity: 0.15 }).addTo(map);
-
-                    // Zoom ravvicinato al bosco
-                    map.setView([lat, lon], 16);
-                },
-                (error) => {
-                    alert("Attiva il GPS del telefono e autorizza il browser a leggere la posizione.");
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
-            );
+            navigator.geolocation.getCurrentPosition((position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                if (userMarker) { map.removeLayer(userMarker); map.removeLayer(userCircle); }
+                userMarker = L.marker([lat, lon]).addTo(map).bindPopup("Sei qui").openPopup();
+                userCircle = L.circle([lat, lon], { radius: position.coords.accuracy, color: '#1a73e8', fillOpacity: 0.1 }).addTo(map);
+                map.setView([lat, lon], 16);
+            }, (err) => alert("Attiva il GPS e autorizza il browser."), { enableHighAccuracy: true });
         }
     </script>
 </body>
