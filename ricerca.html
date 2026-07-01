@@ -27,11 +27,9 @@
         nav a { color: var(--primary); text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 4px; }
         nav a:hover, nav a.active { background-color: var(--card-bg); }
 
-        /* Area Mappa a tutto schermo sotto i menu */
         #map-container { flex: 1; position: relative; width: 100%; background-color: #e5e3df; }
         #map { width: 100%; height: 100%; z-index: 1; }
 
-        /* Bottone Flottante GPS */
         .gps-btn {
             position: absolute;
             bottom: 25px;
@@ -69,57 +67,53 @@
 
     <div id="map-container">
         <div id="map"></div>
-        
         <button class="gps-btn" onclick="trovaPosizione()">📍 Centra GPS</button>
     </div>
 
-    <footer>Mappa Geoscopio RT &copy; 2026</footer>
+    <footer>Mappa Ambientale Nazionale &copy; 2026</footer>
 
     <script>
         // Inizializza la mappa centrata sulla Toscana
         const map = L.map('map').setView([43.4000, 11.1000], 9);
 
-        // Mappa di base sempre visibile (OpenStreetMap)
+        // Mappa base stradale e sentieri (OpenStreetMap)
         const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap'
         }).addTo(map);
 
-        // URL del server WMS cartografico della Regione Toscana
-        const wmsUrl = "https://www502.regione.toscana.it/wmsre/com.rt.wms.RTwms/wms";
-
-        // 1. Livello Idrografico Regionale (Fiumi e Fossi)
-        const idrografia = L.tileLayer.wms(wmsUrl, {
-            layers: 'rt_idrografia.reticolo',
+        // 1. LIVELLO GEO-PORTALE NAZIONALE: RETICOLO IDROGRAFICO COMPLETO (HTTPS Sicuro)
+        const idrografia = L.tileLayer.wms("https://wms.pcn.minambiente.it/ogc/wms", {
+            layers: 'RN.RETICOLOIDROGRAFICO',
             format: 'image/png',
             transparent: true,
-            version: '1.3.0',
-            attribution: 'Regione Toscana'
+            version: '1.1.1',
+            attribution: 'Ministero Ambiente'
         }).addTo(map);
 
-        // 2. Livello Uso del Suolo (Carta Forestale e dei Boschi)
-        const usoSuolo = L.tileLayer.wms(wmsUrl, {
-            layers: 'rt_usosuolo.clc18', // Versione aggiornata
+        // 2. LIVELLO GEO-PORTALE NAZIONALE: CARTA DELLA COPERTURA DEL SUOLO / BOSCHI (Corine Land Cover HTTPS)
+        const usoSuolo = L.tileLayer.wms("https://wms.pcn.minambiente.it/ogc/wms", {
+            layers: 'corine_land_cover_2018',
             format: 'image/png',
             transparent: true,
-            version: '1.3.0',
-            opacity: 0.5, // Trasparenza per far leggere la mappa sotto
-            attribution: 'Regione Toscana'
+            version: '1.1.1',
+            opacity: 0.45, // Sovrapposizione trasparente ottimale
+            attribution: 'Ministero Ambiente'
         }).addTo(map);
 
-        // Pannello di controllo dei livelli in alto a destra
+        // Pannello di controllo
         const baseMaps = {
             "🗺️ Mappa Base (OSM)": osm
         };
 
         const overlayMaps = {
-            "🌊 Fiumi e Fossi (RT)": idrografia,
-            "🌳 Mappa Boschi (RT)": usoSuolo
+            "🌊 Fiumi e Fossi (PCN)": idrografia,
+            "🌳 Mappa Boschi (PCN)": usoSuolo
         };
 
         L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
 
-        // GESTIONE GEOLOCALIZZAZIONE GPS
+        // GEOLOCALIZZAZIONE GPS
         let userMarker = null;
         let userCircle = null;
 
@@ -141,15 +135,15 @@
                     }
 
                     userMarker = L.marker([lat, lon]).addTo(map)
-                        .bindPopup(`<b>Sei qui</b><br>Precisione: ${Math.round(accuracy)} metri`).openPopup();
+                        .bindPopup(`<b>Sei qui</b><br>Precisione GPS: ${Math.round(accuracy)} metri`).openPopup();
 
                     userCircle = L.circle([lat, lon], { radius: accuracy, color: '#1a73e8', fillOpacity: 0.15 }).addTo(map);
 
-                    // Zoom ravvicinato al terreno (scala 16) per forzare il caricamento dei fiumi minori e dei boschi
+                    // Zoom ravvicinato al bosco
                     map.setView([lat, lon], 16);
                 },
                 (error) => {
-                    alert("Attiva il GPS o dai i permessi di posizione al browser.");
+                    alert("Attiva il GPS del telefono e autorizza il browser a leggere la posizione.");
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
