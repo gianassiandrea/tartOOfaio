@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Il Tartufaio - Mappa Vegetazione</title>
+    <title>Il Tartufaio - Mappa Filtri Alberi</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
@@ -24,9 +24,6 @@
         #map-container { flex: 1; position: relative; width: 100%; }
         #map { width: 100%; height: 100%; }
         .gps-btn { position: absolute; bottom: 25px; left: 20px; z-index: 1000; background: white; border: 2px solid rgba(0,0,0,0.2); padding: 10px; font-weight: bold; cursor: pointer; border-radius: 4px; box-shadow: 0 1px 5px rgba(0,0,0,0.4); }
-        
-        /* Stile personalizzato per i Popup informativi del bosco */
-        .leaflet-popup-content b { color: var(--primary); }
         .popup-info-table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 0.85rem; }
         .popup-info-table td { padding: 3px 0; border-bottom: 1px solid #eee; }
     </style>
@@ -46,101 +43,122 @@
     </div>
 
     <script>
-        // Inizializza la mappa sulla Toscana (zona Arezzo/Firenze prendendo Montemignaio come riferimento iniziale)
-        const map = L.map('map').setView([43.73, 11.63], 12);
+        // Inizializzazione centrata su Firenzuola con zoom ottimale
+        const map = L.map('map').setView([44.23, 11.42], 12);
 
-        // Livelli base alternativi
+        // Sfondi mappa
         const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
         const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 19 });
 
-        // FUNZIONE PER ASSEGNARE UN COLORE IN BASE AL TIPO DI ALBERO PRINCIPALE (SPECFOR_1 o CATFOR)
-        function prendiColoreAlbero(specie) {
-            if (!specie) return "#808080"; // Grigio se vuoto
-            
-            specie = specie.toLowerCase();
-            
-            if (specie.includes("pino") || specie.includes("conifere")) return "#1b4d3e"; // Verde scuro/pino
-            if (specie.includes("cerro") || specie.includes("quercia") || specie.includes("roverella")) return "#8b5a2b"; // Marrone quercia
-            if (specie.includes("faggio")) return "#a0522d"; // Siena/Faggete
-            if (specie.includes("pioppo") || specie.includes("ontano") || specie.includes("salice")) return "#228b22"; // Verde brillante (fiumi/umido)
-            if (specie.includes("castagno")) return "#cd853f"; // Arancio/Castagneti
-            if (specie.includes("nocciolo")) return "#d2b48c"; // Beige/Noccioli
-            
-            return "#556b2f"; // Verde oliva generico per altre latifoglie
+        // CREAZIONE DEI LIVELLI FILTRATI VUOTI (Li riempiremo dinamicamente via codice)
+        const layerQuerce = L.layerGroup().addTo(map); // Di base teniamo accese le querce
+        const layerPini = L.layerGroup();
+        const layerFaggi = L.layerGroup();
+        const layerFiumiFondovalle = L.layerGroup();
+        const layerAltriBoschi = L.layerGroup();
+
+        // Funzione per generare la scheda Popup identica per tutti i livelli
+        function generaPopupBosco(feature, layer) {
+            let popupContent = `
+                <div>
+                    <h4>🌳 Info Inventario Forestale</h4>
+                    <table class="popup-info-table">
+                        <tr><td><b>Località:</b></td><td>${feature.properties.NOME || '-'}</td></tr>
+                        <tr><td><b>Categoria:</b></td><td>${feature.properties.CATFOR || '-'}</td></tr>
+                        <tr><td><b>Albero 1 (Dom):</b></td><td>${feature.properties.SPECFOR_1 || '-'}</td></tr>
+                        <tr><td><b>Albero 2:</b></td><td>${feature.properties.SPECFOR_2 || '-'}</td></tr>
+                        <tr><td><b>Quota media:</b></td><td>${feature.properties.QUOTA || '-'} m s.l.m.</td></tr>
+                        <tr><td><b>Pendenza:</b></td><td>${feature.properties.PEND || '-'}%</td></tr>
+                    </table>
+                </div>`;
+            layer.bindPopup(popupContent);
         }
 
-        // Funzione di stile dinamica per ogni poligono del GeoJSON
-        function stileBoscoDinamico(feature) {
-            // Estraiamo la specie principale (SPECFOR_1) o la categoria (CATFOR) per decidere il colore
-            const speciePrincipale = feature.properties.SPECFOR_1 || feature.properties.CATFOR || "";
-            return {
-                fillColor: prendiColoreAlbero(speciePrincipale),
-                weight: 1,
-                opacity: 0.7,
-                color: '#ffffff', // Bordo bianco sottile tra i vari boschi
-                fillOpacity: 0.55 // Abbastanza trasparente da far leggere il satellite o i sentieri sotto
-            };
-        }
-
-        const layerBoschiLocali = L.layerGroup().addTo(map);
-
-        // CARICAMENTO E COSTRUZIONE DELLA TABELLA INFORMATIVA AL CLICK
+        // CARICAMENTO FILE UNICO E SMISTAMENTO NEI LIVELLI CORRETTI
         fetch('boschi_zona.geojson')
-            .then(response => response.json())
+            .then(res => res.json())
             .then(data => {
+                
+                // Analizziamo ogni singolo bosco presente nel file unico
                 L.geoJSON(data, {
-                    style: stileBoscoDinamico,
                     onEachFeature: function (feature, layer) {
-                        if (feature.properties) {
-                            // Creiamo un contenuto HTML elegante che riproduce i dati essenziali della tua tabella
-                            let popupContent = `
-                                <div>
-                                    <h4>🌳 Dettaglio Bosco</h4>
-                                    <table class="popup-info-table">
-                                        <tr><td><b>Comune:</b></td><td>${feature.properties.NOME || '-'}</td></tr>
-                                        <tr><td><b>Categoria:</b></td><td>${feature.properties.CATFOR || '-'}</td></tr>
-                                        <tr><td><b>Struttura:</b></td><td>${feature.properties.COLT_AGGR || '-'} (${feature.properties.TIPO || '-'})</td></tr>
-                                        <tr><td><b>Albero 1:</b></td><td>${feature.properties.SPECFOR_1 || '-'}</td></tr>
-                                        <tr><td><b>Albero 2:</b></td><td>${feature.properties.SPECFOR_2 || '-'}</td></tr>
-                                        <tr><td><b>Quota media:</b></td><td>${feature.properties.QUOTA || '-'} m s.l.m.</td></tr>
-                                        <tr><td><b>Pendenza:</b></td><td>${feature.properties.PEND || '-'}%</td></tr>
-                                    </table>
-                                </div>
-                            `;
-                            layer.bindPopup(popupContent);
+                        generaPopupBosco(feature, layer);
+
+                        // Uniamo i testi di Albero 1, Albero 2 e Categoria per fare un controllo totale (tutto in minuscolo)
+                        const f1 = (feature.properties.SPECFOR_1 || "").toLowerCase();
+                        const f2 = (feature.properties.SPECFOR_2 || "").toLowerCase();
+                        const cat = (feature.properties.CATFOR || "").toLowerCase();
+
+                        // CONTROLLO 1: QUERCE, CERRI, ROVERELLE (Sia come Albero 1 che come Albero 2)
+                        if (f1.includes("quercia") || f1.includes("cerro") || f1.includes("roverella") || 
+                            f2.includes("quercia") || f2.includes("cerro") || f2.includes("roverella") || 
+                            cat.includes("querco")) {
+                            
+                            layer.setStyle({ fillColor: "#8b5a2b", weight: 1, opacity: 0.6, color: "#fff", fillOpacity: 0.55 });
+                            layer.addTo(layerQuerce);
+                        }
+                        
+                        // CONTROLLO 2: PINI, ABETI, CONIFERE (Albero 1 o Albero 2)
+                        else if (f1.includes("pino") || f1.includes("abete") || f1.includes("conifere") ||
+                                 f2.includes("pino") || f2.includes("abete") || f2.includes("conifere") ||
+                                 cat.includes("conifere")) {
+                            
+                            layer.setStyle({ fillColor: "#1b4d3e", weight: 1, opacity: 0.6, color: "#fff", fillOpacity: 0.55 });
+                            layer.addTo(layerPini);
+                        }
+
+                        // CONTROLLO 3: FAGGIO (Albero 1 o Albero 2)
+                        else if (f1.includes("faggio") || f2.includes("faggio") || cat.includes("faggete")) {
+                            layer.setStyle({ fillColor: "#a0522d", weight: 1, opacity: 0.6, color: "#fff", fillOpacity: 0.55 });
+                            layer.addTo(layerFaggi);
+                        }
+
+                        // CONTROLLO 4: AMBIENTI UMIDI DI FONDOVALLE (Pioppo, Salice, Ontano, Carpino)
+                        else if (f1.includes("pioppo") || f1.includes("salice") || f1.includes("ontano") || f1.includes("carpino") ||
+                                 f2.includes("pioppo") || f2.includes("salice") || f2.includes("ontano") || f2.includes("carpino")) {
+                            
+                            layer.setStyle({ fillColor: "#228b22", weight: 1, opacity: 0.6, color: "#fff", fillOpacity: 0.55 });
+                            layer.addTo(layerFiumiFondovalle);
+                        }
+
+                        // CONTROLLO 5: TUTTI GLI ALTRI TIPI (Castagni, terreni saldi, arbustivi, ecc.)
+                        else {
+                            layer.setStyle({ fillColor: "#708090", weight: 1, opacity: 0.5, color: "#fff", fillOpacity: 0.4 });
+                            layer.addTo(layerAltriBoschi);
                         }
                     }
-                }).addTo(layerBoschiLocali);
-                
-                // Se vuoi che la mappa si adatti automaticamente all'estensione del file appena caricato:
-                // const geojsonLayer = L.geoJSON(data);
-                // map.fitBounds(geojsonLayer.getBounds());
-            })
-            .catch(err => console.error("Errore nel caricamento del file boschi_zona.geojson: ", err));
+                });
 
-        // Pannello di Controllo
+            }).catch(err => console.error("Errore lettura file unico geojson: ", err));
+
+        // CONFIGURAZIONE PANNELLO DI CONTROLLO INTERATTIVO (In alto a destra)
         const baseMaps = {
             "🗺️ Mappa Stradale (OSM)": osm,
             "🛰️ Vista Satellite (Esri)": satellite
         };
 
+        // Questo pannello permette ora di accendere/spegnere i singoli gruppi botanici a piacimento
         const overlayMaps = {
-            "🌳 Inventario Forestale RT": layerBoschiLocali
+            "🟤 Roverelle / Cerri / Querce": layerQuerce,
+            "🌲 Pini / Conifere (Marzuolo)": layerPini,
+            "🟠 Faggete Appenniniche": layerFaggi,
+            "🟢 Pioppi / Salici / Ontani (Fossi)": layerFiumiFondovalle,
+            "⚪ Altre Categorie / Castagni": layerAltriBoschi
         };
 
         L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(map);
 
-        // GPS
+        // GPS RILEVAMENTO POSIZIONE
         let userMarker, userCircle;
         function trovaPosizione() {
             navigator.geolocation.getCurrentPosition((position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 if (userMarker) { map.removeLayer(userMarker); map.removeLayer(userCircle); }
-                userMarker = L.marker([lat, lon]).addTo(map).bindPopup("Sei qui").openPopup();
+                userMarker = L.marker([lat, lon]).addTo(map).bindPopup("Sei qui nel bosco").openPopup();
                 userCircle = L.circle([lat, lon], { radius: position.coords.accuracy, color: '#1a73e8', fillOpacity: 0.1 }).addTo(map);
                 map.setView([lat, lon], 16);
-            }, (err) => alert("Attiva il GPS e autorizza il browser."), { enableHighAccuracy: true });
+            }, (err) => alert("Attiva il GPS del telefono"), { enableHighAccuracy: true });
         }
     </script>
 </body>
