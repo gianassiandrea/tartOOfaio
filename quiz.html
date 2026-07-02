@@ -21,8 +21,24 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 80px; }
 
-        header { background: linear-gradient(135deg, #1a1310, #2d201a); color: white; padding: 25px 20px; text-align: center; border-bottom: 3px solid var(--accent); }
-        header h1 { font-size: 2.2rem; margin-bottom: 5px; color: var(--accent); }
+        /* HEADER MODIFICATO: Sfondo scuro e allineamento centrale flessibile per il logo */
+        header { 
+            background: linear-gradient(135deg, #1a1310, #2d201a); 
+            padding: 10px 20px; 
+            text-align: center; 
+            border-bottom: 3px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70px; /* Altezza coordinata con index.html e ricerca.html */
+        }
+        
+        /* STILE DEL LOGO: Protegge le proporzioni della grafica su ogni dispositivo */
+        .app-logo {
+            max-height: 100%;
+            max-width: 250px;
+            object-fit: contain;
+        }
 
         nav { background-color: #14100e; padding: 10px; text-align: center; border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: 10px; }
         nav a { color: var(--text-light); text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 4px; transition: background 0.2s, color 0.2s; }
@@ -61,15 +77,15 @@
 </head>
 <body>
 
+    <!-- HEADER AGGIORNATO: Sostituito il testo con il componente grafico logo.png -->
     <header>
-        <h1>Il Tartufaio</h1>
-        <p>Simulatore Esame Abilitazione</p>
+        <img src="logo.png" alt="Il Tartufaio Logo" class="app-logo">
     </header>
 
 <nav>
-    <a href="index.html" class="active">📅 Home / Calendario</a>
+    <a href="index.html">📅 Home / Calendario</a>
     <a href="ricerca.html">🗺️ Mappa Ricerca</a>
-    <a href="quiz.html">🎓 Simulatore Esame</a>
+    <a href="quiz.html" class="active">🎓 Simulatore Esame</a>
 </nav>
 
     <div class="container">
