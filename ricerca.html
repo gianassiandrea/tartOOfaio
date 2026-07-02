@@ -17,7 +17,26 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; height: 100vh; display: flex; flex-direction: column; }
-        header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 15px; text-align: center; border-bottom: 3px solid var(--accent); }
+        
+        /* HEADER MODIFICATO: Ottimizzato per allineare al centro il logo PNG */
+        header { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+            padding: 10px 20px; 
+            text-align: center; 
+            border-bottom: 3px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70px; /* Altezza fissa per dare stabilità grafica */
+        }
+        
+        /* STILE DEL LOGO: Mantiene le proporzioni su schermi fissi e mobili */
+        .app-logo {
+            max-height: 100%;
+            max-width: 250px;
+            object-fit: contain;
+        }
+
         nav { background-color: #efeae2; padding: 10px; text-align: center; display: flex; justify-content: center; gap: 10px; }
         nav a { color: var(--primary); text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 4px; }
         nav a.active { background-color: white; }
@@ -30,7 +49,11 @@
 </head>
 <body>
 
-    <header><h1>Il Tartufaio</h1></header>
+    <!-- HEADER AGGIORNATO: Inserito il tag IMG per il logo progettato -->
+    <header>
+        <img src="logo.png" alt="Il Tartufaio Logo" class="app-logo">
+    </header>
+
     <nav>
         <a href="index.html">📅 Calendario</a>
         <a href="ricerca.html" class="active">🗺️ Mappa Ricerca</a>
