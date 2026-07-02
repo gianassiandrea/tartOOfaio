@@ -21,8 +21,24 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 80px; }
 
-        header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 25px 20px; text-align: center; border-bottom: 5px solid var(--accent); }
-        header h1 { font-size: 2.2rem; margin-bottom: 5px; }
+        /* HEADER MODIFICATO: Ottimizzato per allineare al centro il logo PNG */
+        header { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
+            padding: 10px 20px; 
+            text-align: center; 
+            border-bottom: 5px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70px; /* Altezza fissa per dare stabilità grafica */
+        }
+        
+        /* STILE DEL LOGO: Mantiene le proporzioni su schermi fissi e mobili */
+        .app-logo {
+            max-height: 100%;
+            max-width: 250px;
+            object-fit: contain;
+        }
 
         nav { background-color: #efeae2; padding: 10px; text-align: center; border-bottom: 1px solid var(--border); display: flex; justify-content: center; gap: 10px; }
         nav a { color: var(--primary); text-decoration: none; font-weight: bold; padding: 8px 16px; border-radius: 4px; transition: background 0.2s; }
@@ -81,9 +97,9 @@
 </head>
 <body>
 
+    <!-- HEADER AGGIORNATO: Testo rimosso e inserito il tag IMG per logo.png -->
     <header>
-        <h1>Il Tartufaio</h1>
-        <p>Vademecum Digitale per la Cerca</p>
+        <img src="logo.png" alt="Il Tartufaio Logo" class="app-logo">
     </header>
 
 <nav>
@@ -98,7 +114,7 @@
             <div class="lunar-widget" id="lunarWidget">
                 <span class="moon-icon" id="moonIcon">🌑</span>
                 <span id="moonPhaseName">Calcolo Fase...</span>
-                <div class="tooltip-text" id="moonTooltip">Caricamento consiglio della tradizione...</div>
+                <div class="tooltip-text" id="moonTooltip">Caricamento consiglio della traditione...</div>
             </div>
 
             <!-- RETTANGOLI METEO AFFIANCATI E COMPATTI -->
